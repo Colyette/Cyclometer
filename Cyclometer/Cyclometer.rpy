@@ -3,7 +3,7 @@ I-Logix-RPY-Archive version 8.10.0 C++ 6930133
 	- _id = GUID 1cc64d65-8bc4-44ae-8edf-12aad3279c7a;
 	- _myState = 8192;
 	- _name = "Cyclometer";
-	- _modifiedTimeWeak = 5.6.2015::18:12:32;
+	- _modifiedTimeWeak = 5.6.2015::18:53:26;
 	- _lastID = 2;
 	- _UserColors = { IRPYRawContainer 
 		- size = 16;
@@ -593,7 +593,7 @@ I-Logix-RPY-Archive version 8.10.0 C++ 6930133
 			}
 			- _name = "AutoNoCalcBikeStop";
 			- _modifiedTimeWeak = 1.2.1990::0:0:0;
-			- _lastModifiedTime = "5.6.2015::18:12:42";
+			- _lastModifiedTime = "5.6.2015::18:53:3";
 			- _graphicChart = { CGIMscChart 
 				- vLadderMargin = 20;
 				- m_usingActivationBar = 0;
@@ -619,7 +619,7 @@ I-Logix-RPY-Archive version 8.10.0 C++ 6930133
 				}
 				- m_drawBehavior = 0;
 				- m_bIsPreferencesInitialized = 0;
-				- elementList = 31;
+				- elementList = 28;
 				{ CGIBox 
 					- _id = GUID 40860b4c-d6c0-456a-8ec7-0012d16be804;
 					- m_type = 108;
@@ -786,7 +786,7 @@ I-Logix-RPY-Archive version 8.10.0 C++ 6930133
 						- m_nOrientationCtrlPt = 8;
 					}
 					- m_drawBehavior = 0;
-					- m_transform = 1 0 0 0.0146136 50 50 ;
+					- m_transform = 1 0 0 0.0145735 50 50 ;
 					- m_bIsPreferencesInitialized = 1;
 					- m_AdditionalLabel = { CGIText 
 						- m_str = "";
@@ -830,7 +830,7 @@ I-Logix-RPY-Archive version 8.10.0 C++ 6930133
 						- m_nOrientationCtrlPt = 8;
 					}
 					- m_drawBehavior = 0;
-					- m_transform = 1 0 0 0.0146136 208 50 ;
+					- m_transform = 1 0 0 0.0145735 208 50 ;
 					- m_bIsPreferencesInitialized = 1;
 					- m_AdditionalLabel = { CGIText 
 						- m_str = "";
@@ -874,51 +874,7 @@ I-Logix-RPY-Archive version 8.10.0 C++ 6930133
 						- m_nOrientationCtrlPt = 8;
 					}
 					- m_drawBehavior = 0;
-					- m_transform = 1 0 0 0.0146136 337 50 ;
-					- m_bIsPreferencesInitialized = 1;
-					- m_AdditionalLabel = { CGIText 
-						- m_str = "";
-						- m_style = "Arial" 10 0 0 0 1 ;
-						- m_color = { IColor 
-							- m_fgColor = 0;
-							- m_bgColor = 0;
-							- m_bgFlag = 0;
-						}
-						- m_position = 1 0 0  ;
-						- m_nIdent = 0;
-						- m_bImplicitSetRectPoints = 0;
-						- m_nOrientationCtrlPt = 1;
-					}
-					- m_position = 4 0 0  0 49885  96 49885  96 0  ;
-					- m_pInheritsFrom = { IHandle 
-						- _m2Class = "";
-					}
-					- m_nInheritanceMask = 0;
-					- m_SubType = 0;
-				}
-				{ CGIMscColumnCR 
-					- _id = GUID b047c0df-485a-4c43-abec-2e578cd4a591;
-					- m_type = 109;
-					- m_pModelObject = { IHandle 
-						- _m2Class = "IClassifierRole";
-						- _id = GUID b8db4e7d-bd9c-4b33-b5ca-12724e886775;
-					}
-					- m_pParent = GUID 40860b4c-d6c0-456a-8ec7-0012d16be804;
-					- m_name = { CGIText 
-						- m_str = "Trip";
-						- m_style = "Arial" 10 0 0 0 1 ;
-						- m_color = { IColor 
-							- m_fgColor = 0;
-							- m_bgColor = 0;
-							- m_bgFlag = 0;
-						}
-						- m_position = 1 0 0  ;
-						- m_nIdent = 0;
-						- m_bImplicitSetRectPoints = 0;
-						- m_nOrientationCtrlPt = 8;
-					}
-					- m_drawBehavior = 0;
-					- m_transform = 1 0 0 0.0146136 494 50 ;
+					- m_transform = 1 0 0 0.0145735 340 50 ;
 					- m_bIsPreferencesInitialized = 1;
 					- m_AdditionalLabel = { CGIText 
 						- m_str = "";
@@ -962,7 +918,7 @@ I-Logix-RPY-Archive version 8.10.0 C++ 6930133
 						- m_nOrientationCtrlPt = 8;
 					}
 					- m_drawBehavior = 0;
-					- m_transform = 1 0 0 0.0146136 782 50 ;
+					- m_transform = 1 0 0 0.0145735 782 50 ;
 					- m_bIsPreferencesInitialized = 1;
 					- m_AdditionalLabel = { CGIText 
 						- m_str = "";
@@ -1031,8 +987,8 @@ I-Logix-RPY-Archive version 8.10.0 C++ 6930133
 					- m_anglePoint1 = 0 0 ;
 					- m_anglePoint2 = 0 0 ;
 					- m_line_style = 0;
-					- m_SourcePort = 48 18681 ;
-					- m_TargetPort = 48 18681 ;
+					- m_SourcePort = 48 18733 ;
+					- m_TargetPort = 48 18733 ;
 					- m_bLeft = 0;
 				}
 				{ CGIMscMessage 
@@ -1079,8 +1035,8 @@ I-Logix-RPY-Archive version 8.10.0 C++ 6930133
 					- m_anglePoint1 = 0 0 ;
 					- m_anglePoint2 = 0 0 ;
 					- m_line_style = 0;
-					- m_SourcePort = 48 19639 ;
-					- m_TargetPort = 48 19639 ;
+					- m_SourcePort = 48 19693 ;
+					- m_TargetPort = 48 19693 ;
 					- m_bLeft = 0;
 				}
 				{ CGIMscMessage 
@@ -1127,12 +1083,12 @@ I-Logix-RPY-Archive version 8.10.0 C++ 6930133
 						- m_bImplicitSetRectPoints = 0;
 						- m_nOrientationCtrlPt = 8;
 					}
-					- m_arrow = 2 415 356  415 376  ;
+					- m_arrow = 2 418 356  418 376  ;
 					- m_anglePoint1 = 0 0 ;
 					- m_anglePoint2 = 0 0 ;
 					- m_line_style = 2;
-					- m_SourcePort = 48 20939 ;
-					- m_TargetPort = 48 22308 ;
+					- m_SourcePort = 48 20997 ;
+					- m_TargetPort = 48 22369 ;
 					- m_bLeft = 0;
 				}
 				{ CGIMscMessage 
@@ -1176,12 +1132,12 @@ I-Logix-RPY-Archive version 8.10.0 C++ 6930133
 						- m_bImplicitSetRectPoints = 0;
 						- m_nOrientationCtrlPt = 8;
 					}
-					- m_arrow = 2 415 183  415 224  ;
+					- m_arrow = 2 418 183  418 224  ;
 					- m_anglePoint1 = 0 0 ;
 					- m_anglePoint2 = 0 0 ;
 					- m_line_style = 2;
-					- m_SourcePort = 48 9101 ;
-					- m_TargetPort = 48 11907 ;
+					- m_SourcePort = 48 9126 ;
+					- m_TargetPort = 48 11939 ;
 					- m_bLeft = 0;
 				}
 				{ CGIMscMessage 
@@ -1228,8 +1184,8 @@ I-Logix-RPY-Archive version 8.10.0 C++ 6930133
 					- m_anglePoint1 = 0 0 ;
 					- m_anglePoint2 = 0 0 ;
 					- m_line_style = 0;
-					- m_SourcePort = 48 35994 ;
-					- m_TargetPort = 48 35994 ;
+					- m_SourcePort = 48 36093 ;
+					- m_TargetPort = 48 36093 ;
 					- m_bLeft = 0;
 				}
 				{ CGIMscMessage 
@@ -1277,8 +1233,8 @@ I-Logix-RPY-Archive version 8.10.0 C++ 6930133
 					- m_anglePoint1 = 0 0 ;
 					- m_anglePoint2 = 0 0 ;
 					- m_line_style = 2;
-					- m_SourcePort = 48 37362 ;
-					- m_TargetPort = 48 38731 ;
+					- m_SourcePort = 48 37465 ;
+					- m_TargetPort = 48 38838 ;
 					- m_bLeft = 0;
 				}
 				{ CGIMscMessage 
@@ -1325,64 +1281,13 @@ I-Logix-RPY-Archive version 8.10.0 C++ 6930133
 						- m_bImplicitSetRectPoints = 0;
 						- m_nOrientationCtrlPt = 8;
 					}
-					- m_arrow = 2 413 396  413 416  ;
+					- m_arrow = 2 416 396  416 416  ;
 					- m_anglePoint1 = 0 0 ;
 					- m_anglePoint2 = 0 0 ;
 					- m_line_style = 2;
-					- m_SourcePort = 48 23677 ;
-					- m_TargetPort = 48 25045 ;
+					- m_SourcePort = 48 23742 ;
+					- m_TargetPort = 48 25114 ;
 					- m_bLeft = 0;
-				}
-				{ CGIFreeShape 
-					- _id = GUID b7c74327-c8ae-48f4-af54-1c0267c6bdf0;
-					- m_type = 188;
-					- m_pModelObject = { IHandle 
-						- _m2Class = "";
-					}
-					- m_pParent = GUID 40860b4c-d6c0-456a-8ec7-0012d16be804;
-					- m_name = { CGIText 
-						- m_str = "";
-						- m_style = "Arial" 10 0 0 0 1 ;
-						- m_color = { IColor 
-							- m_fgColor = 0;
-							- m_bgColor = 0;
-							- m_bgFlag = 0;
-						}
-						- m_position = 1 0 0  ;
-						- m_nIdent = 0;
-						- m_bImplicitSetRectPoints = 0;
-						- m_nOrientationCtrlPt = 8;
-					}
-					- m_drawBehavior = 4096;
-					- m_transform = 1.42254 0 0 1.125 -241.028 -19.875 ;
-					- m_bIsPreferencesInitialized = 1;
-					- m_points = 4 516 119  587 119  587 159  516 159  ;
-				}
-				{ CGIFreeText 
-					- _id = GUID 4a029950-1d28-4949-8144-b8778f3acf62;
-					- m_type = 189;
-					- m_pModelObject = { IHandle 
-						- _m2Class = "";
-					}
-					- m_pParent = GUID 40860b4c-d6c0-456a-8ec7-0012d16be804;
-					- m_name = { CGIText 
-						- m_str = "";
-						- m_style = "Arial" 10 0 0 0 1 ;
-						- m_color = { IColor 
-							- m_fgColor = 0;
-							- m_bgColor = 0;
-							- m_bgFlag = 0;
-						}
-						- m_position = 1 0 0  ;
-						- m_nIdent = 0;
-						- m_bImplicitSetRectPoints = 0;
-						- m_nOrientationCtrlPt = 8;
-					}
-					- m_drawBehavior = 4096;
-					- m_transform = 1 0 0 1 -25 3 ;
-					- m_bIsPreferencesInitialized = 1;
-					- m_points = 4 518 123  620 123  620 141  518 141  ;
-					- m_text = "TRIP_CALC_ON";
 				}
 				{ CGIFreeShape 
 					- _id = GUID 7c0e08d5-8070-46c9-9456-4abcea790e8d;
@@ -1810,7 +1715,7 @@ I-Logix-RPY-Archive version 8.10.0 C++ 6930133
 				- _id = GUID b1eb0b1a-1ab9-4137-bef6-20ef1b00ab2f;
 				- _modifiedTimeWeak = 1.2.1990::0:0:0;
 				- ClassifierRoles = { IRPYRawContainer 
-					- size = 5;
+					- size = 4;
 					- value = 
 					{ IClassifierRole 
 						- _id = GUID c2d00eb9-eaa3-434e-b419-527a6620b13c;
@@ -1839,18 +1744,6 @@ I-Logix-RPY-Archive version 8.10.0 C++ 6930133
 					{ IClassifierRole 
 						- _id = GUID bd1ea711-df9c-463f-8b39-c4ba0de6b8b4;
 						- _name = "Calculations";
-						- _modifiedTimeWeak = 5.6.2015::17:7:13;
-						- m_eRoleType = CLASS;
-						- m_pBase = { IHandle 
-							- _m2Class = "";
-						}
-						- m_instance = { IHandle 
-							- _m2Class = "";
-						}
-					}
-					{ IClassifierRole 
-						- _id = GUID b8db4e7d-bd9c-4b33-b5ca-12724e886775;
-						- _name = "Trip";
 						- _modifiedTimeWeak = 5.6.2015::17:7:13;
 						- m_eRoleType = CLASS;
 						- m_pBase = { IHandle 
@@ -2083,9 +1976,6 @@ I-Logix-RPY-Archive version 8.10.0 C++ 6930133
 							- _m2Class = "";
 						}
 					}
-				}
-				- InteractionOccurrences = { IRPYRawContainer 
-					- size = 0;
 				}
 				- CombinedFragments = { IRPYRawContainer 
 					- size = 1;
@@ -2466,7 +2356,7 @@ I-Logix-RPY-Archive version 8.10.0 C++ 6930133
 			}
 			- _name = "SpeedCalc";
 			- _modifiedTimeWeak = 1.2.1990::0:0:0;
-			- _lastModifiedTime = "5.6.2015::18:6:40";
+			- _lastModifiedTime = "5.6.2015::18:53:58";
 			- _graphicChart = { CGIMscChart 
 				- vLadderMargin = 6;
 				- m_usingActivationBar = 0;
@@ -2492,7 +2382,7 @@ I-Logix-RPY-Archive version 8.10.0 C++ 6930133
 				}
 				- m_drawBehavior = 0;
 				- m_bIsPreferencesInitialized = 0;
-				- elementList = 42;
+				- elementList = 39;
 				{ CGIBox 
 					- _id = GUID 68c9645e-f0b1-4c0c-9b34-eaf6bdc446b1;
 					- m_type = 108;
@@ -2549,10 +2439,10 @@ I-Logix-RPY-Archive version 8.10.0 C++ 6930133
 					- m_transform = 2.14754 0 0 1 -452.262 50 ;
 					- m_bIsPreferencesInitialized = 1;
 					- m_bFramesetModified = 1;
-					- m_polygon = 4 361 291  544 291  544 1040  361 1040  ;
+					- m_polygon = 4 361 291  544 291  544 906  361 906  ;
 					- m_nNameFormat = 0;
 					- m_nIsNameFormat = 0;
-					- frameset = "<frameset rows=749>
+					- frameset = "<frameset rows=615>
 <frame Id=GUID 14ae4a74-68e4-472f-9e5b-97cb39f89fa1>";
 					- Compartments = { IRPYRawContainer 
 						- size = 0;
@@ -2596,7 +2486,7 @@ I-Logix-RPY-Archive version 8.10.0 C++ 6930133
 						- m_bImplicitSetRectPoints = 0;
 						- m_nOrientationCtrlPt = 1;
 					}
-					- m_polygon = 4 361 291  544 291  544 1040  361 1040  ;
+					- m_polygon = 4 361 291  544 291  544 906  361 906  ;
 					- m_nNameFormat = 0;
 					- m_nIsNameFormat = 0;
 					- Compartments = { IRPYRawContainer 
@@ -2628,10 +2518,10 @@ I-Logix-RPY-Archive version 8.10.0 C++ 6930133
 					- m_drawBehavior = 4096;
 					- m_transform = 0.66578 0 0 1 115.376 -124 ;
 					- m_bIsPreferencesInitialized = 1;
-					- m_polygon = 4 376 718  611 718  611 1005  376 1005  ;
+					- m_polygon = 4 376 718  611 718  611 1012  376 1012  ;
 					- m_nNameFormat = 0;
 					- m_nIsNameFormat = 0;
-					- frameset = "<frameset rows=287>
+					- frameset = "<frameset rows=294>
 <frame Id=GUID 264ec5bd-abed-4f89-b6e9-e2bb2bc89c1c>";
 					- Compartments = { IRPYRawContainer 
 						- size = 0;
@@ -2675,7 +2565,7 @@ I-Logix-RPY-Archive version 8.10.0 C++ 6930133
 						- m_bImplicitSetRectPoints = 0;
 						- m_nOrientationCtrlPt = 1;
 					}
-					- m_polygon = 4 376 718  611 718  611 1005  376 1005  ;
+					- m_polygon = 4 376 718  611 718  611 1012  376 1012  ;
 					- m_nNameFormat = 0;
 					- m_nIsNameFormat = 0;
 					- Compartments = { IRPYRawContainer 
@@ -2704,7 +2594,7 @@ I-Logix-RPY-Archive version 8.10.0 C++ 6930133
 						- m_nOrientationCtrlPt = 8;
 					}
 					- m_drawBehavior = 0;
-					- m_transform = 1 0 0 0.0242157 45 50 ;
+					- m_transform = 1 0 0 0.0202867 45 50 ;
 					- m_bIsPreferencesInitialized = 1;
 					- m_AdditionalLabel = { CGIText 
 						- m_str = "";
@@ -2748,7 +2638,7 @@ I-Logix-RPY-Archive version 8.10.0 C++ 6930133
 						- m_nOrientationCtrlPt = 8;
 					}
 					- m_drawBehavior = 0;
-					- m_transform = 1 0 0 0.0242157 203 50 ;
+					- m_transform = 1 0 0 0.0202867 203 50 ;
 					- m_bIsPreferencesInitialized = 1;
 					- m_AdditionalLabel = { CGIText 
 						- m_str = "";
@@ -2792,51 +2682,7 @@ I-Logix-RPY-Archive version 8.10.0 C++ 6930133
 						- m_nOrientationCtrlPt = 8;
 					}
 					- m_drawBehavior = 0;
-					- m_transform = 1 0 0 0.0242157 332 50 ;
-					- m_bIsPreferencesInitialized = 1;
-					- m_AdditionalLabel = { CGIText 
-						- m_str = "";
-						- m_style = "Arial" 10 0 0 0 1 ;
-						- m_color = { IColor 
-							- m_fgColor = 0;
-							- m_bgColor = 0;
-							- m_bgFlag = 0;
-						}
-						- m_position = 1 0 0  ;
-						- m_nIdent = 0;
-						- m_bImplicitSetRectPoints = 0;
-						- m_nOrientationCtrlPt = 1;
-					}
-					- m_position = 4 0 0  0 49885  96 49885  96 0  ;
-					- m_pInheritsFrom = { IHandle 
-						- _m2Class = "";
-					}
-					- m_nInheritanceMask = 0;
-					- m_SubType = 0;
-				}
-				{ CGIMscColumnCR 
-					- _id = GUID 10773deb-ef50-46e5-aa19-d27398f15c0b;
-					- m_type = 109;
-					- m_pModelObject = { IHandle 
-						- _m2Class = "IClassifierRole";
-						- _id = GUID bde0f412-34de-411b-bda1-9ffe8d245591;
-					}
-					- m_pParent = GUID 68c9645e-f0b1-4c0c-9b34-eaf6bdc446b1;
-					- m_name = { CGIText 
-						- m_str = "Trip";
-						- m_style = "Arial" 10 0 0 0 1 ;
-						- m_color = { IColor 
-							- m_fgColor = 0;
-							- m_bgColor = 0;
-							- m_bgFlag = 0;
-						}
-						- m_position = 1 0 0  ;
-						- m_nIdent = 0;
-						- m_bImplicitSetRectPoints = 0;
-						- m_nOrientationCtrlPt = 8;
-					}
-					- m_drawBehavior = 0;
-					- m_transform = 1 0 0 0.0242157 489 50 ;
+					- m_transform = 1 0 0 0.0202867 332 50 ;
 					- m_bIsPreferencesInitialized = 1;
 					- m_AdditionalLabel = { CGIText 
 						- m_str = "";
@@ -2880,7 +2726,7 @@ I-Logix-RPY-Archive version 8.10.0 C++ 6930133
 						- m_nOrientationCtrlPt = 8;
 					}
 					- m_drawBehavior = 0;
-					- m_transform = 1 0 0 0.0242157 777 50 ;
+					- m_transform = 1 0 0 0.0202867 777 50 ;
 					- m_bIsPreferencesInitialized = 1;
 					- m_AdditionalLabel = { CGIText 
 						- m_str = "";
@@ -2946,8 +2792,8 @@ I-Logix-RPY-Archive version 8.10.0 C++ 6930133
 					- m_anglePoint1 = 0 0 ;
 					- m_anglePoint2 = 0 0 ;
 					- m_line_style = 0;
-					- m_SourcePort = 48 3221 ;
-					- m_TargetPort = 48 3221 ;
+					- m_SourcePort = 48 3845 ;
+					- m_TargetPort = 48 3845 ;
 					- m_bLeft = 0;
 				}
 				{ CGIMscMessage 
@@ -2994,8 +2840,8 @@ I-Logix-RPY-Archive version 8.10.0 C++ 6930133
 					- m_anglePoint1 = 0 0 ;
 					- m_anglePoint2 = 0 0 ;
 					- m_line_style = 0;
-					- m_SourcePort = 48 4666 ;
-					- m_TargetPort = 48 4666 ;
+					- m_SourcePort = 48 5570 ;
+					- m_TargetPort = 48 5570 ;
 					- m_bLeft = 0;
 				}
 				{ CGIMscMessage 
@@ -3045,8 +2891,8 @@ I-Logix-RPY-Archive version 8.10.0 C++ 6930133
 					- m_anglePoint1 = 0 0 ;
 					- m_anglePoint2 = 0 0 ;
 					- m_line_style = 0;
-					- m_SourcePort = 48 11274 ;
-					- m_TargetPort = 48 11274 ;
+					- m_SourcePort = 48 13457 ;
+					- m_TargetPort = 48 13457 ;
 					- m_bLeft = 0;
 				}
 				{ CGIMscMessage 
@@ -3093,8 +2939,8 @@ I-Logix-RPY-Archive version 8.10.0 C++ 6930133
 					- m_anglePoint1 = 0 0 ;
 					- m_anglePoint2 = 0 0 ;
 					- m_line_style = 0;
-					- m_SourcePort = 48 11852 ;
-					- m_TargetPort = 48 11852 ;
+					- m_SourcePort = 48 14147 ;
+					- m_TargetPort = 48 14147 ;
 					- m_bLeft = 0;
 				}
 				{ CGIMscMessage 
@@ -3144,8 +2990,8 @@ I-Logix-RPY-Archive version 8.10.0 C++ 6930133
 					- m_anglePoint1 = 0 0 ;
 					- m_anglePoint2 = 0 0 ;
 					- m_line_style = 2;
-					- m_SourcePort = 48 18129 ;
-					- m_TargetPort = 48 19244 ;
+					- m_SourcePort = 48 21640 ;
+					- m_TargetPort = 48 22971 ;
 					- m_bLeft = 0;
 				}
 				{ CGIMscMessage 
@@ -3195,8 +3041,8 @@ I-Logix-RPY-Archive version 8.10.0 C++ 6930133
 					- m_anglePoint1 = 0 0 ;
 					- m_anglePoint2 = 0 0 ;
 					- m_line_style = 2;
-					- m_SourcePort = 48 16270 ;
-					- m_TargetPort = 48 17303 ;
+					- m_SourcePort = 48 19422 ;
+					- m_TargetPort = 48 20654 ;
 					- m_bLeft = 0;
 				}
 				{ CGIMscMessage 
@@ -3247,8 +3093,8 @@ I-Logix-RPY-Archive version 8.10.0 C++ 6930133
 					- m_anglePoint1 = 0 0 ;
 					- m_anglePoint2 = 0 0 ;
 					- m_line_style = 2;
-					- m_SourcePort = 48 23415 ;
-					- m_TargetPort = 48 24282 ;
+					- m_SourcePort = 48 27949 ;
+					- m_TargetPort = 48 28985 ;
 					- m_bLeft = 0;
 				}
 				{ CGIMscMessage 
@@ -3267,12 +3113,12 @@ I-Logix-RPY-Archive version 8.10.0 C++ 6930133
 							- m_bgColor = 0;
 							- m_bgFlag = 0;
 						}
-						- m_position = 4 1 -8  69 -8  69 6  1 6  ;
+						- m_position = 4 -6 -9  84 -9  84 5  -6 5  ;
 						- m_nIdent = 0;
 						- m_bImplicitSetRectPoints = 0;
-						- m_transform = 1 0 0 1 388 565 ;
-						- m_nHorizontalSpacing = 4;
-						- m_nVerticalSpacing = -14;
+						- m_transform = 1 0 0 1 426 884 ;
+						- m_nHorizontalSpacing = 40;
+						- m_nVerticalSpacing = 5;
 						- m_nOrientationCtrlPt = 6;
 					}
 					- m_drawBehavior = 4096;
@@ -3299,8 +3145,8 @@ I-Logix-RPY-Archive version 8.10.0 C++ 6930133
 					- m_anglePoint1 = 0 0 ;
 					- m_anglePoint2 = 0 0 ;
 					- m_line_style = 2;
-					- m_SourcePort = 48 34441 ;
-					- m_TargetPort = 48 35308 ;
+					- m_SourcePort = 48 41111 ;
+					- m_TargetPort = 48 42146 ;
 					- m_bLeft = 0;
 				}
 				{ CGIMscMessage 
@@ -3351,8 +3197,8 @@ I-Logix-RPY-Archive version 8.10.0 C++ 6930133
 					- m_anglePoint1 = 0 0 ;
 					- m_anglePoint2 = 0 0 ;
 					- m_line_style = 2;
-					- m_SourcePort = 48 32789 ;
-					- m_TargetPort = 48 33945 ;
+					- m_SourcePort = 48 39139 ;
+					- m_TargetPort = 48 40519 ;
 					- m_bLeft = 0;
 				}
 				{ CGIMscMessage 
@@ -3400,8 +3246,8 @@ I-Logix-RPY-Archive version 8.10.0 C++ 6930133
 					- m_anglePoint1 = 0 0 ;
 					- m_anglePoint2 = 0 0 ;
 					- m_line_style = 2;
-					- m_SourcePort = 48 5492 ;
-					- m_TargetPort = 48 7185 ;
+					- m_SourcePort = 48 6556 ;
+					- m_TargetPort = 48 8577 ;
 					- m_bLeft = 0;
 				}
 				{ CGIMscMessage 
@@ -3448,8 +3294,8 @@ I-Logix-RPY-Archive version 8.10.0 C++ 6930133
 					- m_anglePoint1 = 0 0 ;
 					- m_anglePoint2 = 0 0 ;
 					- m_line_style = 0;
-					- m_SourcePort = 48 35803 ;
-					- m_TargetPort = 48 35803 ;
+					- m_SourcePort = 48 43082 ;
+					- m_TargetPort = 48 43082 ;
 					- m_bLeft = 0;
 				}
 				{ CGIMscMessage 
@@ -3496,12 +3342,12 @@ I-Logix-RPY-Archive version 8.10.0 C++ 6930133
 						- m_bImplicitSetRectPoints = 0;
 						- m_nOrientationCtrlPt = 8;
 					}
-					- m_arrow = 2 859 923  859 955  ;
+					- m_arrow = 2 859 930  859 962  ;
 					- m_anglePoint1 = 0 0 ;
 					- m_anglePoint2 = 0 0 ;
 					- m_line_style = 2;
-					- m_SourcePort = 48 36051 ;
-					- m_TargetPort = 48 37373 ;
+					- m_SourcePort = 48 43378 ;
+					- m_TargetPort = 48 44956 ;
 					- m_bLeft = 0;
 				}
 				{ CGIMscMessage 
@@ -3551,8 +3397,8 @@ I-Logix-RPY-Archive version 8.10.0 C++ 6930133
 					- m_anglePoint1 = 0 0 ;
 					- m_anglePoint2 = 0 0 ;
 					- m_line_style = 2;
-					- m_SourcePort = 48 13710 ;
-					- m_TargetPort = 48 14825 ;
+					- m_SourcePort = 48 16365 ;
+					- m_TargetPort = 48 17696 ;
 					- m_bLeft = 0;
 				}
 				{ CGIMscMessage 
@@ -3599,8 +3445,8 @@ I-Logix-RPY-Archive version 8.10.0 C++ 6930133
 					- m_anglePoint1 = 0 0 ;
 					- m_anglePoint2 = 0 0 ;
 					- m_line_style = 0;
-					- m_SourcePort = 48 25851 ;
-					- m_TargetPort = 48 25851 ;
+					- m_SourcePort = 48 30858 ;
+					- m_TargetPort = 48 30858 ;
 					- m_bLeft = 0;
 				}
 				{ CGIMscMessage 
@@ -3650,8 +3496,8 @@ I-Logix-RPY-Archive version 8.10.0 C++ 6930133
 					- m_anglePoint1 = 0 0 ;
 					- m_anglePoint2 = 0 0 ;
 					- m_line_style = 2;
-					- m_SourcePort = 48 27792 ;
-					- m_TargetPort = 48 28577 ;
+					- m_SourcePort = 48 33175 ;
+					- m_TargetPort = 48 34111 ;
 					- m_bLeft = 0;
 				}
 				{ CGIMscMessage 
@@ -3698,60 +3544,9 @@ I-Logix-RPY-Archive version 8.10.0 C++ 6930133
 					- m_anglePoint1 = 0 0 ;
 					- m_anglePoint2 = 0 0 ;
 					- m_line_style = 0;
-					- m_SourcePort = 48 26388 ;
-					- m_TargetPort = 48 26388 ;
+					- m_SourcePort = 48 31499 ;
+					- m_TargetPort = 48 31499 ;
 					- m_bLeft = 0;
-				}
-				{ CGIFreeShape 
-					- _id = GUID 672d3981-b5ce-4947-9d7c-5032ba006cf4;
-					- m_type = 188;
-					- m_pModelObject = { IHandle 
-						- _m2Class = "";
-					}
-					- m_pParent = GUID 68c9645e-f0b1-4c0c-9b34-eaf6bdc446b1;
-					- m_name = { CGIText 
-						- m_str = "";
-						- m_style = "Arial" 10 0 0 0 1 ;
-						- m_color = { IColor 
-							- m_fgColor = 0;
-							- m_bgColor = 0;
-							- m_bgFlag = 0;
-						}
-						- m_position = 1 0 0  ;
-						- m_nIdent = 0;
-						- m_bImplicitSetRectPoints = 0;
-						- m_nOrientationCtrlPt = 8;
-					}
-					- m_drawBehavior = 4096;
-					- m_transform = 1.42254 0 0 1.125 -246.028 -19.875 ;
-					- m_bIsPreferencesInitialized = 1;
-					- m_points = 4 516 119  587 119  587 159  516 159  ;
-				}
-				{ CGIFreeText 
-					- _id = GUID a5a848b8-9b33-4a6f-a1d2-3bc137ce55f4;
-					- m_type = 189;
-					- m_pModelObject = { IHandle 
-						- _m2Class = "";
-					}
-					- m_pParent = GUID 68c9645e-f0b1-4c0c-9b34-eaf6bdc446b1;
-					- m_name = { CGIText 
-						- m_str = "";
-						- m_style = "Arial" 10 0 0 0 1 ;
-						- m_color = { IColor 
-							- m_fgColor = 0;
-							- m_bgColor = 0;
-							- m_bgFlag = 0;
-						}
-						- m_position = 1 0 0  ;
-						- m_nIdent = 0;
-						- m_bImplicitSetRectPoints = 0;
-						- m_nOrientationCtrlPt = 8;
-					}
-					- m_drawBehavior = 4096;
-					- m_transform = 1 0 0 1 -30 3 ;
-					- m_bIsPreferencesInitialized = 1;
-					- m_points = 4 518 123  620 123  620 141  518 141  ;
-					- m_text = "TRIP_CALC_ON";
 				}
 				{ CGIFreeShape 
 					- _id = GUID 908182e9-9438-4a29-b54a-60311c206390;
@@ -3927,7 +3722,7 @@ I-Logix-RPY-Archive version 8.10.0 C++ 6930133
 						- m_nOrientationCtrlPt = 8;
 					}
 					- m_drawBehavior = 4096;
-					- m_transform = 2.07042 0 0 1.7037 -391 583.037 ;
+					- m_transform = 2.07042 0 0 1.7037 -396 551.037 ;
 					- m_bIsPreferencesInitialized = 1;
 					- m_points = 4 355 125  426 125  426 152  355 152  ;
 				}
@@ -3952,7 +3747,7 @@ I-Logix-RPY-Archive version 8.10.0 C++ 6930133
 						- m_nOrientationCtrlPt = 8;
 					}
 					- m_drawBehavior = 4096;
-					- m_transform = 1 0 0 1 -10 684 ;
+					- m_transform = 1 0 0 1 -15 652 ;
 					- m_bIsPreferencesInitialized = 1;
 					- m_points = 4 361 124  477 124  477 142  361 142  ;
 					- m_text = "TRIP_CALC_UPDATE";
@@ -4210,7 +4005,7 @@ I-Logix-RPY-Archive version 8.10.0 C++ 6930133
 				- _id = GUID 9c85c456-2b32-4652-846b-e937832697c6;
 				- _modifiedTimeWeak = 1.2.1990::0:0:0;
 				- ClassifierRoles = { IRPYRawContainer 
-					- size = 5;
+					- size = 4;
 					- value = 
 					{ IClassifierRole 
 						- _id = GUID e72c649c-7acc-4215-85d9-e31c61312c73;
@@ -4240,18 +4035,6 @@ I-Logix-RPY-Archive version 8.10.0 C++ 6930133
 						- _id = GUID 66b236fc-0fcf-49ff-80d5-c17bc4e4f39e;
 						- _name = "Calculations";
 						- _modifiedTimeWeak = 5.4.2015::18:5:6;
-						- m_eRoleType = CLASS;
-						- m_pBase = { IHandle 
-							- _m2Class = "";
-						}
-						- m_instance = { IHandle 
-							- _m2Class = "";
-						}
-					}
-					{ IClassifierRole 
-						- _id = GUID bde0f412-34de-411b-bda1-9ffe8d245591;
-						- _name = "Trip";
-						- _modifiedTimeWeak = 5.4.2015::18:5:24;
 						- m_eRoleType = CLASS;
 						- m_pBase = { IHandle 
 							- _m2Class = "";
