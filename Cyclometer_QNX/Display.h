@@ -31,34 +31,53 @@
 #define AUTO_LED    (0x10)
 #define UNIT_LED    (0x20)
 
+//TODO make A input, B input
+#define DIO_DIR		(0x00)	// Sets Port A and Port B to outputs
+//For DIO port mapping
+#define A_D_BASE_ADDRESS (0x280)
+#define D_I_O_PORT_LENGTH (1)
+#define D_I_O_CONTROL_REGISTER (A_D_BASE_ADDRESS + 0x0b)
+#define D_I_O_INTERRUPT_DMA_COUNTER_CONTROL (A_D_BASE_ADDRESS +0x04)
+#define D_I_O_PORT_A (A_D_BASE_ADDRESS + 0x08)
+#define D_I_O_PORT_B (A_D_BASE_ADDRESS + 0x09)
+
 class Display {
 public:
 
 
 //display states
-enum display_reset_state {INIT_DATA,UNIT_SELECT,SET_TIRE_SIZE, M_HOLD_WAIT,TIRE_AUTO,NUM_R_STATES};
-enum display_main_state {SPEED_DISPLAY,DISTANCE_DISPLAY,ELAPSE_DISPLAY,ELAPSE_TIMER,NUM_M_STATES},
+//reset substates
+enum display_reset_state {INIT_DATA,UNIT_SELECT, SET_TIRE_SIZE, M_HOLD_WAIT, TIRE_AUTO, NUM_R_STATES};
+//main substates
+enum display_main_state {SPEED_DISPLAY,DISTANCE_DISPLAY,ELAPSE_DISPLAY,ELAPSE_TIMER,NUM_M_STATES};
+//substates
 enum display_super_state {RESET,MAIN,PO_RESET,NUM_MAIN_STATES};
 
-//contructor and destructor for display class
+//constructor and destructor for display class
 Display();
 ~Display();
 
-initDIO(); //open and initializes DIO on the Data ack port
+int initDIO(); //open and initializes DIO on the Data ack port
 
 //controls 7 seg display with internal variables and current state flgs
-refreshDisplay();
+void refreshDisplay();
 
 //screen refreshing for each display mode, to get correct segment values
-int _refreshDistDisplay(uint8_t* d0, uint8_t* d1, uint8_t* d2, uint8_t* d3);
-int _refreshSpeedDisplay(uint8_t* d0, uint8_t* d1, uint8_t* d2, uint8_t* d3);
-int _refreshElapseDisplay(uint8_t* d0, uint8_t* d1, uint8_t* d2, uint8_t* d3);
-int _refreshUnitDisplay();
-refreshTireDisplay();
+int _refreshDistDisplay		(uint8_t* d0, uint8_t* d1, uint8_t* d2, uint8_t* d3);
+int _refreshSpeedDisplay	(uint8_t* d0, uint8_t* d1, uint8_t* d2, uint8_t* d3);
+int _refreshElapseDisplay	(uint8_t* d0, uint8_t* d1, uint8_t* d2, uint8_t* d3);
+int _refreshUnitDisplay		(uint8_t* d0, uint8_t* d1, uint8_t* d2, uint8_t* d3);
+int _refreshTireDisplay		(uint8_t* d0, uint8_t* d1, uint8_t* d2, uint8_t* d3);
 
 private:
+//set Port A and B to output
+int _setPortDirection();
+
+//gets root access for the requesting thread
+int _GetRootAccess();
+
 //timer for 7 segment display anode switching (MIGHT BE ABLE TO USE FOR OTHERS WITH new pulseID)
-int InitializeSegmentTimer(long nsfreq, int pulseid);
+int _InitializeSegmentTimer(long nsfreq, int pulseid);
 
 //converts a digit 0-9 to encoded 7 segment value
 uint8_t digitToSegment(int digit);
@@ -72,7 +91,7 @@ uintptr_t d_i_o_port_b_handle ;
 pthread_t eTimerThread;
 pthread_t segmentRunner;
 display_super_state curSuper; //dictates whether to use curSub or curSubr
-diplay_main_state curSub;
+display_main_state curSub;
 display_reset_state curSubr;
 
 //values

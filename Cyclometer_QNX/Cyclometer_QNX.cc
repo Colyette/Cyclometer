@@ -10,6 +10,9 @@
 #include <hw/inout.h>   /* for in*() and out*() functions */
 #include <sys/neutrino.h>   /* for ThreadCtl() */
 #include <sys/mman.h>   /* for mmap_device_io() */
+#include <atomic.h>		/*atomic_add for pulse counting*/
+
+#ifdef IDK_JUST_WANT_TO_COMPILE_DISPLAY_NOW
 
 /* The Neutrino IO port used here corresponds to a */
 /* single register which is one byte long */
@@ -128,3 +131,4 @@ int main() {
 
     return 0;
 }
+#endif //IDK_JUST_WANT_TO_COMPILE_DISPLAY_NOW
