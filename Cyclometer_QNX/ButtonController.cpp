@@ -6,7 +6,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <pthread.h>
-
+#ifdef IDK_JUST_WANT_TO_COMPILE_DISPLAY_NOW
 /**
  * @brief constructor for button controller. 
  * @precon both parametered handlers need to be memory mapped beforehande
@@ -131,3 +131,4 @@ int pollButton() {
 int initButtonPins(){
 
 }
+#endif //IDK_JUST_WANT_TO_COMPILE_DISPLAY_NOW

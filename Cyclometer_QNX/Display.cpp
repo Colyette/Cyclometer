@@ -4,7 +4,9 @@
  * and variable flgs
  * @author Alyssa Colyette
  */
+
 #include "Display.h"
+
 #include <stdio.h>
 #include <sys/neutrino.h> /* for ThreadCtl() */
 #include <sys/mman.h>     /* for mmap_device_io() */
@@ -14,9 +16,11 @@
 #include <math.h> 		//for floor and round functions
 #include <sys/netmgr.h> 	//channel constants like ND_LOCAL_NODE
 
+
+
 #define POLL_RATE (13) //frequency for 7 seg display ~50/4
 
-#define TEST_DISPLAY 	//activates the main for display tests
+#define TEST_DISPLAY 1 	//activates the main for display tests
 
 //contructor and destructor for display class
 Display::Display(){
@@ -29,6 +33,18 @@ Display::Display(){
     d_i_o_port_b_handle = -1;
 
     _run = 1;
+
+#ifdef TEST_Display
+    //for testing the display format without implementing the state machine
+    curSubr = UNIT_SELECT;
+    //values
+    cspeed=60;
+    cavg = 20;
+    cdistance =205.1 ;
+    cetime= 10000;     //in seconds
+    unit=0;       //flg like 0 or 1
+    tireSize=240;
+#endif
 }
 
 Display::~Display(){
@@ -245,7 +261,7 @@ void Display::refreshDisplay(){
         //assign digit value for left most
         pAwrite = in8 (d_i_o_port_a_handle);
         pAwrite = pAwrite & ~A1 & ~A2 & ~A3; //turn off all anodes but 0
-        pAwrite != A0;
+        pAwrite |= A0;
         out8(d_i_o_port_a_handle, pAwrite);
         out8(d_i_o_port_b_handle, dis0);
         //sleep 
@@ -297,6 +313,7 @@ int Display::_refreshElapseDisplay (uint8_t* d0, uint8_t* d1, uint8_t* d2, uint8
     sd3 = floor(sec - 10*sd2);
     *d2 = digitToSegment(sd2);
     *d3 = digitToSegment(sd3);
+    return 1;
 }
 
 /**
@@ -419,7 +436,7 @@ int Display::_refreshTireDisplay(uint8_t* d0, uint8_t* d1, uint8_t* d2, uint8_t*
 }
 
 //
-#ifdef TEST_Display
+#ifdef TEST_DISPLAY
 int main() {
 	Display dist;
 	dist.initDIO();

@@ -29,7 +29,6 @@
 #define INIT_BIT 0x04
 #define INTR_BIT 0x10
 #define PARALLEL_IRQ 0x07 /* parallel port’s interrupt vector */
-
  
 #define LOW 0x00
 #define HIGH 0xFF

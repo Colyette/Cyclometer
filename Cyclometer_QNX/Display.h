@@ -12,24 +12,24 @@
 
 //7 segment pins
 //port A
-#define A0  (0x00)
-#define A1  (0x01)
-#define A2  (0x02)
-#define A3  (0x04)
+#define A0  (0x01)
+#define A1  (0x02)
+#define A2  (0x04)
+#define A3  (0x08)
 //port B
-#define SA  (0x00)
-#define SB  (0x01)
-#define SC  (0x02)
-#define SD  (0x04)
-#define SE  (0x08)
-#define SF  (0x10)
-#define SG  (0x20)
-#define SDP (0x40)
+#define SA  (0x01)
+#define SB  (0x02)
+#define SC  (0x04)
+#define SD  (0x08)
+#define SE  (0x10)
+#define SF  (0x20)
+#define SG  (0x40)
+#define SDP (0x80)
 
 //LEDs, port A
-#define WHEEL_LED   (0x08)
-#define AUTO_LED    (0x10)
-#define UNIT_LED    (0x20)
+#define WHEEL_LED   (0x10)
+#define AUTO_LED    (0x20)
+#define UNIT_LED    (0x40)
 
 //TODO make A input, B input
 #define DIO_DIR		(0x00)	// Sets Port A and Port B to outputs
@@ -103,5 +103,5 @@ int unit;       //flg like 0 or 1
 int tireSize;   //in cm
 
 
-}
+};
 #endif //DISPLAY_H
