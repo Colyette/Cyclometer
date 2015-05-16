@@ -119,15 +119,8 @@ int run(){
     }
 }
 
-/**
- * @brief  run display state machine, determines next state from state transist
- */
-int Display::runDisplayStateMachine () {
-    //TODO
-}
-
-
 // 7 Segment Display Code~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 int Display::_InitializeSegmentTimer(long nsfreq, int pulseid){
   int chid;
   timer_t timer_id;

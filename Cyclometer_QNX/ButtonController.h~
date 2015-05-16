@@ -18,8 +18,7 @@ class  ButtonControl{
 public:
     enum bcstate {NO_BUTTON,WAIT,M_HOLD,M_SS_HOLD,ALL_HOLD,PO_RESET};     
     
-    //ButtonControl(uintptr_t e_data_handle,uintptr_t e_control_handle); // pass button input reg.
-    ButtonControl();
+    ButtonControl(uintptr_t e_data_handle,uintptr_t e_control_handle); // pass button input reg.
     ~ButtonControl();
 
     /**

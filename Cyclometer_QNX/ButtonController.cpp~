@@ -18,7 +18,6 @@
 //}
 
 ButtonControl::ButtonControl() {
-
 }
     
 ButtonControl::~ButtonControl(){

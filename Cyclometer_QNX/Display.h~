@@ -65,9 +65,6 @@ int initDIO(); //open and initializes DIO on the Data ack port
 //controls 7 seg display with internal variables and current state flgs
 void refreshDisplay();
 
-//run display state machine, determines next state from state transist
-int runDisplayStateMachine();
-
 //screen refreshing for each display mode, to get correct segment values
 int _refreshDistDisplay		(uint8_t* d0, uint8_t* d1, uint8_t* d2, uint8_t* d3);
 int _refreshSpeedDisplay	(uint8_t* d0, uint8_t* d1, uint8_t* d2, uint8_t* d3);
