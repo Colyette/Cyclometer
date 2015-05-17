@@ -18,7 +18,7 @@
 //}
 
 ButtonControl::ButtonControl() {
-
+    
 }
     
 ButtonControl::~ButtonControl(){
@@ -133,6 +133,20 @@ int pollButton() {
  * @brief initializw the DI button pins
  */
 int initButtonPins(){
+	int status = 0 ;
+    	int privity_err ;
+
+    	/* Give this thread root permissions to access the hardware */
+    	privity_err = ThreadCtl( _NTO_TCTL_IO, NULL );
+    	if ( privity_err == -1 ) {
+        	fprintf( stderr, "can't get root permissions\n" );
+        	status = -1;
+		return 2;
+    	}
+ 	out8( d_i_o_control_handle, DIO_DIR) ;     // make port A input,B output
+        printf("Set button presses\n");
+	control_handle = mmap_device_io( D_I_O_PORT_LENGTH, D_I_O_CONTROL_REGISTER ) ;
+	data_handle = mmap_device_io( D_I_O_PORT_LENGTH, D_I_O_PORT_A ) ;
 
 }
 #endif //IDK_JUST_WANT_TO_COMPILE_DISPLAY_NOW

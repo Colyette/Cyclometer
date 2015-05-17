@@ -9,6 +9,7 @@
 
 #include <stdint.h>
 #include <pthread.h>
+#include "events.h"
 
 //7 segment pins
 //port A

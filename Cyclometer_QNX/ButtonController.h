@@ -8,11 +8,13 @@
 
 #include <stdint.h>
 #include <pthread.h>
-//#include "c_events.h" //TODO universal event types for cyclometer
+#include "events.h"
 
 #define MODE_BUTTON         (0x01)
 #define SET_BUTTON          (0x2)
 #define START_STOP_BUTTON   (0x03)
+
+
 
 class  ButtonControl{
 public:
@@ -35,6 +37,8 @@ public:
     //init the pins for listening to buttons
     int initButtonPins();
 
+	void throwEvent();
+
 private:
     uint8_t oldInput;  //for storing old input values
 
@@ -45,5 +49,6 @@ private:
     
     bcstate cur_state;    //the current that the machine is in
     
-}
+	static std::recursive_mutex m_eventQ_mutex;
+};
 #endif  // BUTTON_CONTROL_H

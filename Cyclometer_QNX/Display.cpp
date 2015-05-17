@@ -471,6 +471,7 @@ int Display::_refreshTireDisplay(uint8_t* d0, uint8_t* d1, uint8_t* d2, uint8_t*
 int main() {
 	Display dist;
 	dist.initDIO();
+	dist.run();
 
 }
 

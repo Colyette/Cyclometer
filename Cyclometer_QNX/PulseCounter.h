@@ -46,7 +46,7 @@ int run();
 
 void clearPulseCount(){_pulseCount =0;}
 
-unsigned getPulseCount(){return _pulseCount;)
+unsigned readPulseCount(){return _pulseCount;)
 
 private:
 //TODO move globals
