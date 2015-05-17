@@ -18,7 +18,9 @@
 
 
 
-#define POLL_RATE (13) //frequency for 7 seg display ~50/4
+#define POLL_RATE (13) //frequency for 7 seg display ~50/4 Hz
+
+#define ELAPSE_RES (1*10^9)	 //1 second resolution
 
 #define TEST_DISPLAY 1 	//activates the main for display tests
 
@@ -26,6 +28,13 @@ void * DisplayRefreshHelper(void* instance) {
 	Display* c_instance = (Display*) instance;
 	printf("DisplayRefreshHelper: going into refresh thread\n");
 	c_instance->refreshDisplay(); //casted to instantiated class and run main thread funct
+	return 0 ;
+}
+
+void * DisplayElapseTimerHelper(void* instance) {
+	Display* c_instance = (Display*) instance;
+	printf("DisplayElapseTimerHelper: going into elapse timer thread\n");
+	c_instance->runTimer(); //casted to instantiated class and run main thread funct
 	return 0 ;
 }
 
@@ -57,6 +66,25 @@ Display::Display(){
 Display::~Display(){
     _run = 0;
     //join threads..
+}
+
+/**
+ * @brief Runs the elapse timer if trip calculations are on, the elapse
+ * time is updated
+ */
+int Display::runTimer(){
+	struct _pulse pulse; //for timer msg
+    int chid,pid; //for target of timer msg passing
+    chid= _InitializeSegmentTimer(POLL_RATE,1); //returns the ch id for send messages
+	while(_run) {
+		pid = MsgReceivePulse(chid,&pulse,  sizeof( pulse ),NULL);
+		if (0) { // TODO Auto mode, and motion is detected
+			cetime++;
+		}
+		else if (0) { //TODO Manual Mode and calc is on
+			cetime++;
+		}
+	}
 }
 
 /**
@@ -107,16 +135,204 @@ int Display::initDIO(){
  * @brief starts the statemachine for the display.
  * @precon: DIO is initialized
  */
-int run(){
+int run(){ //TODO maybe initialize DIO in run???
     //run refresh display thread
     if (pthread_create (&segmentRunner, NULL, DisplayRefreshHelper, this)) { 
         printf("Display MainThread: error creating dio Display processing thread\n");
         return;
     }
+	//run elaspe timer
+ 	if (pthread_create (&eTimerThread, NULL, DisplayElapseTimerHelper, this)) { 
+        printf("Display MainThread: error creating elapse timer thread\n");
+        return;
+    }
     //check for changing states
     while (1) {
+	// check for next event recognized
+	if (curEvent !=NUM_EVENTS) { //a new event was trigggered
+	// process the event
         runDisplayStateMachine();
     }
+}
+
+/**
+ * @brief for processing events in the reset state
+ */
+void Display::_resetState() {
+	switch (curSubr) {
+		case INIT_DATA:
+			Init = 1;
+			mode = 0; //manual
+			TCalcFlg =0; //calc off
+			unit = 0; //unit kph
+			tireSize = 210; 
+			//reset trip values
+			cavg = 0;
+			cdistance =0;
+			cetime=0;
+			curSubr = UNIT_SELECT;
+			break;
+    	case UNIT_SELECT:
+			switch (curEvent) {
+				case m_press:
+					//TODO toggle Unit
+					//TODO change LED
+					break;
+				case s_press:
+					curSubr = SET_TIRE_SIZE;
+					break;
+				default:
+					break;
+			}
+        	break;
+    	case SET_TIRE_SIZE:
+			switch (curEvent) {
+				case m_press:
+					tireSize++;
+					if (tireSize < 220) {
+						tireSize = 190;
+					}
+					break;
+				case s_press:
+					if (INIT) {
+						// maybe spawn timer in here instead.. or clr accum
+						cetime = 0;
+						//go to speed display
+						curSuper = MAIN;
+						curSubr = NUM_R_STATES;
+						curSub =SPEED_DISPLAY;
+					} else { //recently came from an re-prog tire size
+						curSuper = MAIN;
+						curSubr = NUM_R_STATES;
+						curSub =DISTANCE_DISPLAY;
+					}
+				case m_hold:
+					curSubr = M_HOLD_WAIT;
+				default:
+					break;
+			}
+        	break;
+    	case M_HOLD_WAIT:
+			switch (curEvent) {
+				case m_release:
+				//TODO TIMEOUT SOMEHOW...
+				default:
+					break;
+			}
+			break;
+     	case TIRE_AUTO:
+            switch (curEvent) {
+				case m_release:
+				//TODO TIMEOUT SOMEHOW...
+				default:
+					break;
+			}           
+        	break; //for preceding 3 states same display
+       	default:
+                	printf("not a valide reset state\n");
+                	break; 
+    }//end reset cases
+	
+}
+
+/**
+ * @brief for processing events in the reset state
+ */
+void Display::_mainState() {
+	switch (curSub) { 
+		case DISTANCE_DISPLAY:
+			//all main states process the same events accept can change tire size
+			switch (curEvent) {
+				case m_press:
+					curSub = ELAPSE_DISPLAY;
+					break;
+				case ss_press:
+					if (!AUTO) { //if manual toggle TCalcFlg
+						if (TCalcFlg) {
+							TCalcFlg =0;
+						} else {
+							TCalcFlg =1;
+						}
+					}
+					break;
+				case tReset: //clear trip values
+					cavg = 0;
+					cdistance =0;
+					cetime=0;
+					break;
+				case calcUpdate:
+					//TODO force screen refresh, my not be needed, 
+					// but values are external still..
+					break;
+				case s_press:
+					//TODO got to tire settings
+					curSuper = RESET;
+					curSub = NUM_M_STATES;
+					curSubr = SET_TIRE_SIZE;
+					break;
+				case poReset:
+					curSuper = PO_RESET;
+					curSub = NUM_M_STATES;
+					curSubr = NUM_R_STATES;
+					break;
+				default:
+					break;
+			}
+			break;
+		case SPEED_DISPLAY:
+			Init =0; //not in PO init anymore
+    	case ELAPSE_DISPLAY:
+			switch (curEvent) {
+				case m_press:
+					if (curSub == SPEED_DISPLAY;) {
+						curSub = DISTANCE_DISPLAY;
+					} else {
+						curSub = SPEED_DISPLAY;
+					}
+					
+					break;
+				case ss_press:
+					if (!AUTO) { //if manual toggle TCalcFlg
+						if (TCalcFlg) {
+							TCalcFlg =0;
+						} else {
+							TCalcFlg =1;
+						}
+					}
+					break;
+				case tReset: //clear trip values
+					cavg = 0;
+					cdistance =0;
+					cetime=0;
+					break;
+				case calcUpdate:
+					//TODO force screen refresh, my not be needed, 
+					// but values are external still..
+					break;
+				case s_press:
+					//toggle user mode
+					if (AUTO) {
+						AUTO =0;
+					} else {
+						AUTO =1;
+					} 
+					//TODO throw user toggled
+
+					break;
+				case poReset:
+					curSuper = PO_RESET;
+					curSub = NUM_M_STATES;
+					curSubr = NUM_R_STATES;
+					break;
+				default:
+					break;
+			}
+			break;
+       	default:
+        	printf("not a valide reset state\n");
+        	break; 
+    }//end reset cases
+	
 }
 
 /**
@@ -124,6 +340,22 @@ int run(){
  */
 int Display::runDisplayStateMachine () {
     //TODO
+	switch(curSuper) {
+		case RESET: 
+			_resetState(); 
+			
+			break;
+		case MAIN:
+			_mainState();
+			break;
+		case PO_RESET:
+			break;
+		default:
+			printf("Not a real superstate\n");
+			break;
+	}
+	//rid handled event
+	curEvent = NUM_EVENTS;
 }
 
 
@@ -240,7 +472,7 @@ void Display::refreshDisplay(){
                         dis1 = digitToSegment(9);
                         dis2 = digitToSegment(8);
                         dis3 = digitToSegment(7); //TODO actual circumference with decimal masking 
-                    break; //for preceding 3 states same display
+                    	break; //for preceding 3 states same display
                     default:
                         printf("not a valide reset state\n");
                         break; 
@@ -474,5 +706,4 @@ int main() {
 	dist.run();
 
 }
-
-#endif
+#endif //TEST_DISPLAY

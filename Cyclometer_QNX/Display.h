@@ -50,7 +50,8 @@ public:
 //reset substates
 enum display_reset_state {INIT_DATA,UNIT_SELECT, SET_TIRE_SIZE, M_HOLD_WAIT, TIRE_AUTO, NUM_R_STATES};
 //main substates
-enum display_main_state {SPEED_DISPLAY,DISTANCE_DISPLAY,ELAPSE_DISPLAY,ELAPSE_TIMER,NUM_M_STATES};
+enum display_main_state {SPEED_DISPLAY,DISTANCE_DISPLAY,ELAPSE_DISPLAY,
+,NUM_M_STATES};
 //substates
 enum display_super_state {RESET,MAIN,PO_RESET,NUM_MAIN_STATES};
 
@@ -76,7 +77,18 @@ int _refreshElapseDisplay	(uint8_t* d0, uint8_t* d1, uint8_t* d2, uint8_t* d3);
 int _refreshUnitDisplay		(uint8_t* d0, uint8_t* d1, uint8_t* d2, uint8_t* d3);
 int _refreshTireDisplay		(uint8_t* d0, uint8_t* d1, uint8_t* d2, uint8_t* d3);
 
+//elaspe timer action
+int runTimer();
+
+//passed the last event triggered into Display class
+void eventUpdate( event lastEvent){curEvent = lastEvent;}
+
 private:
+//for processing if Display is in the Reset state
+void _resetState();
+//for processing if Display is in the Main state
+void _mainState();
+
 //set Port A and B to output
 int _setPortDirection();
 
@@ -109,6 +121,12 @@ int cetime;     //in seconds
 int unit;       //flg like 0 or 1
 int tireSize;   //in cm
 
+//
+int Init; //init flg for reset
+int AUTO;		//manual or auto, 0 man, 1 auto
+int TCalcFlg; //flag for determining if the trip calculation are on
 
+//current event triggered
+event curEvent;
 };
 #endif //DISPLAY_H
