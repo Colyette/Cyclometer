@@ -89,6 +89,13 @@ void _resetState();
 //for processing if Display is in the Main state
 void _mainState();
 
+//for doing timeouts in a state where other triggers are possible
+int startTimeout(int time_ns);
+int timeout();
+struct _pulse tmpulse; //for timer msg for timeout
+int timchid,tmpid; //for target of timeout timer msg passing 
+
+
 //set Port A and B to output
 int _setPortDirection();
 

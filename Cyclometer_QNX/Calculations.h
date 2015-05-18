@@ -31,7 +31,12 @@ public:
 
 	//timer for waiting until the next pulse is received
 	int _InitializeAccumTimer(long nsfreq, int pulseid);
-private
+
+	//passed the last event triggered to Calculations class
+	void eventUpdate( event lastEvent){curEvent = lastEvent;}
+private:
+	event curEvent;
+
 	double _speed;
 	double _avg;
 	double _dist;

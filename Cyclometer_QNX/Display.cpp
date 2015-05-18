@@ -74,8 +74,9 @@ Display::~Display(){
  */
 int Display::runTimer(){
 	struct _pulse pulse; //for timer msg
-    int chid,pid; //for target of timer msg passing
-    chid= _InitializeSegmentTimer(POLL_RATE,1); //returns the ch id for send messages
+    int chid,pid; //for target of timer msg passing 
+    chid= _InitializeSegmentTimer(POLL_RATE,2); //returns the ch id for send messages
+//TODO may have to look into pulse ID other than 1
 	while(_run) {
 		pid = MsgReceivePulse(chid,&pulse,  sizeof( pulse ),NULL);
 		if (0) { // TODO Auto mode, and motion is detected
@@ -153,6 +154,27 @@ int run(){ //TODO maybe initialize DIO in run???
 	// process the event
         runDisplayStateMachine();
     }
+}
+
+/**
+ * @brief for doing timeouts in a state where other triggers are possible
+ * starts a timeout of the provided time, use timeout() to determine it 
+ * timeout has passed.
+ */
+int Display::startTimeout(int time_ns){
+	
+    tmchid= _InitializeSegmentTimer(time_ns,3); //returns the ch id for send messages
+	//TODO spawn a thread that sets a flg after pulse received?
+	//TODO if so, have thread close itself safely after somehow...
+}
+ 
+/**
+ * @brief pollable function to determine if a timeout has occured
+ * @returns 0:no, 1:yes, 2:no timer was initialized yet
+ */
+int Display::timeout(){
+	 //pid = MsgReceivePulse(chid,&pulse,  sizeof( pulse ),NULL);
+	//TODO checks if a spawned thread enters its pulse received state?
 }
 
 /**
@@ -336,7 +358,7 @@ void Display::_mainState() {
 }
 
 /**
- * @brief  run display state machine, determines next state from state transist
+ * @brief  run display state machine, determines next state from state transistion
  */
 int Display::runDisplayStateMachine () {
     //TODO
@@ -705,5 +727,6 @@ int main() {
 	dist.initDIO();
 	dist.run();
 
+	//TODO give display some test events with delays of course
 }
 #endif //TEST_DISPLAY

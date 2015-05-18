@@ -19,6 +19,8 @@ int Cyclometer::initCyclometer(){
 		//give Diplay required values
 
 		//give Calculations required values
+		
+		//broadcast next event
 
 	}
 

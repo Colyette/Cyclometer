@@ -39,7 +39,12 @@ public:
 
 	void throwEvent();
 
+	//passed the last event triggered into buttoncontroller class, MAYNOT BE NEEDED only tm()
+	void eventUpdate( event lastEvent){curEvent = lastEvent;}
+
 private:
+	event curEvent;
+
     uint8_t oldInput;  //for storing old input values
 
     uintptr_t data_handle;

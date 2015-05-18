@@ -92,7 +92,7 @@ int PulseCounter::run() {
 }
 
 
-#ifdef TEST_PULSECOUNTER
+#ifdef TEST_PULSE_COUNTER
 int main() {
 	PulseCounter pc = PulseCounter();
 

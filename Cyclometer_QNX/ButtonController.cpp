@@ -18,7 +18,7 @@
 //}
 
 ButtonControl::ButtonControl() {
-    
+    //TODO default state and init dio
 }
     
 ButtonControl::~ButtonControl(){
@@ -63,7 +63,7 @@ int ButtonControl::runButtonControl(){
     } 
 }
 
-int ButtonControl::detChain() {
+int ButtonControl::detChain() { //TODO use timers?
     time_t start= time(); //todo use millisecond call
     time_t end = start + 200; //timeout
     uint8_t local_old,read; //may not be needed
@@ -149,4 +149,15 @@ int initButtonPins(){
 	data_handle = mmap_device_io( D_I_O_PORT_LENGTH, D_I_O_PORT_A ) ;
 
 }
+
+#ifdef TEST_BUTTON_CONTROLLER
+int main() {
+	ButtonController bContrl;
+	bContrl.initButtonPins();
+	//dist.run();
+	//TODO implement run function
+
+	//TODO give display some test events with delays of course
+}
+
 #endif //IDK_JUST_WANT_TO_COMPILE_DISPLAY_NOW
