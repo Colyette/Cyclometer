@@ -29,8 +29,8 @@
 //port B
 #define SA  (0x01)
 #define SB  (0x02)
-#define SC  (0x04)
-#define SD  (0x08)
+#define SC  (0x04)//
+#define SD  (0x08) //
 #define SE  (0x10)
 #define SF  (0x20)
 #define SG  (0x40)

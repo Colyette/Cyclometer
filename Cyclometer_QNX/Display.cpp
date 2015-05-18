@@ -7,11 +7,11 @@
 
 #include "Display.h"
 
-#define POLL_RATE (13) //frequency for 7 seg display ~50/4 Hz
+#define POLL_RATE (50000000)//(13) //frequency for 7 seg display ~50/4 Hz
 
 #define ELAPSE_RES (1*10^9)	 //1 second resolution
 
-//#define TEST_DISPLAY 1 	//activates the main for display tests
+#define TEST_DISPLAY 1 	//activates the main for display tests
 
 void * DisplayRefreshHelper(void* instance) {
 	Display* c_instance = (Display*) instance;
@@ -39,7 +39,8 @@ Display::Display(){
 
     _run = 1;
 
-#ifdef TEST_Display
+#ifdef TEST_DISPLAY
+    printf("Testing with feed values for speed,avg,dist,time,unit,tiresize\n");
     //for testing the display format without implementing the state machine
     curSubr = UNIT_SELECT;
     //values
@@ -75,6 +76,7 @@ int Display::runTimer(){
 			cetime++;
 		}
 	}
+	return 1;
 }
 
 /**
@@ -118,6 +120,7 @@ int Display::initDIO(){
 	        printf("Couldn't get root access to set DIO ports\n");
 	        return (-1);
 	}
+	return 1;
 }
 
 
@@ -157,6 +160,7 @@ int Display::startTimeout(int time_ns){
     tmchid= _InitializeSegmentTimer(time_ns,3); //returns the ch id for send messages
 	//TODO spawn a thread that sets a flg after pulse received?
 	//TODO if so, have thread close itself safely after somehow...
+    return 0;
 }
  
 /**
@@ -166,6 +170,7 @@ int Display::startTimeout(int time_ns){
 int Display::timeout(){
 	 //pid = MsgReceivePulse(chid,&pulse,  sizeof( pulse ),NULL);
 	//TODO checks if a spawned thread enters its pulse received state?
+	return 0;
 }
 
 /**
@@ -369,6 +374,7 @@ int Display::runDisplayStateMachine () {
 	}
 	//rid handled event
 	curEvent = NUM_EVENTS;
+	return 1; //TODO say if event was handled?
 }
 
 
@@ -466,16 +472,20 @@ void Display::refreshDisplay(){
     struct _pulse pulse; //for timer msg
     int chid,pid; //for target of timer msg passing
     chid= _InitializeSegmentTimer(POLL_RATE,1); //returns the ch id for send messages
+    printf("Entering with states Sup:%d Sur:%d Sum:%d\n", curSuper,curSubr, curSub);
     while (_run) {
         //check state to formate diplay correctly
         //use some flg set after calc update?
+#ifndef TEST_DISPLAY
         switch (curSuper) {
             case RESET:
                 switch (curSubr) {
                     case UNIT_SELECT:
+
                         _refreshUnitDisplay(&dis0,&dis1,&dis2,&dis3);
                         dis0 = dis1 = dis2 =0; //blank the displays
                         dis3 = digitToSegment (1); //TODO actual units variable
+
                         break;
                     case SET_TIRE_SIZE:
                     case M_HOLD_WAIT:
@@ -484,11 +494,11 @@ void Display::refreshDisplay(){
                         dis0 = 0; //blank left most display
                         dis1 = digitToSegment(9);
                         dis2 = digitToSegment(8);
-                        dis3 = digitToSegment(7); //TODO actual circumference with decimal masking 
+                        dis3 = digitToSegment(7); //TODO actual circumference with decimal masking
                     	break; //for preceding 3 states same display
                     default:
                         printf("not a valide reset state\n");
-                        break; 
+                        break;
                 }//end reset cases
                 break;
 
@@ -504,7 +514,7 @@ void Display::refreshDisplay(){
                         break;
                     case DISTANCE_DISPLAY:
                         _refreshDistDisplay(&dis0, &dis1, &dis2, &dis3);  //TODO error check return
-                        dis0 = digitToSegment(9); //(dec) 
+                        dis0 = digitToSegment(9); //(dec)
                         dis1 = digitToSegment(8); //(dec)
                         dis2 = digitToSegment(7); //(dec)
                         dis3 = digitToSegment(6); //(dec)
@@ -522,7 +532,7 @@ void Display::refreshDisplay(){
                         printf("Not in a state with a display\n");
                         break;
                 } //end main cases
-                
+
                 break;
             case PO_RESET:
                 printf("not updating display due to reset state\n");
@@ -530,41 +540,57 @@ void Display::refreshDisplay(){
             default:
                 printf("Not in a valid display state\n");
                 break;
-        } 
+        }
+#endif //TEST_DISPLAY
+
 //TODO might want to separate state/display determination for better display refresh w/o num change
+//TODO switching order dist0 == an3
+        //TODO segments and anodes are active low?
+#ifdef TEST_DISPLAY
+        dis0=digitToSegment(9);
+        dis1= digitToSegment(0);
+        dis2=digitToSegment(7);
+        dis3=digitToSegment(8);
+#endif //TEST_DISPLAY
 
         //display for each digit/anode
         //assign digit value for left most
         pAwrite = in8 (d_i_o_port_a_handle);
-        pAwrite = pAwrite & ~A1 & ~A2 & ~A3; //turn off all anodes but 0
-        pAwrite |= A0;
+        //pAwrite = pAwrite & ~A1 & ~A2 & ~A3; //turn off all anodes but 0
+        pAwrite = pAwrite | A1 | A2 | A3; //turn off all anodes but 0, w/ high sigs
+        pAwrite &= ~A0; //clear A0
         out8(d_i_o_port_a_handle, pAwrite);
-        out8(d_i_o_port_b_handle, dis0);
+        out8(d_i_o_port_b_handle,(uint8_t)~dis3);// ~dis3);
+        //printf("%x\n",(uint8_t)~dis3);
+        //printf("%u\n",pAwrite);
         //sleep 
         pid = MsgReceivePulse(chid,&pulse,  sizeof( pulse ),NULL);
 
         //assign 2nd leftmost digit
         pAwrite = in8(d_i_o_port_a_handle);
-        pAwrite = pAwrite & ~A0 & ~A2 & ~A3; //turn off all anodes but 1
-        pAwrite |= A1;
+        pAwrite = pAwrite | A0 | A2 |A3; //turn off all anodes but 1
+        pAwrite &= ~A1;
         out8(d_i_o_port_a_handle, pAwrite);
-        out8(d_i_o_port_b_handle, dis1);
+        out8(d_i_o_port_b_handle,(uint8_t) ~dis2);
+        //printf("%x\n",(uint8_t)~dis2);
         //sleep
         pid = MsgReceivePulse(chid,&pulse,  sizeof( pulse ),NULL);
 
         pAwrite = in8(d_i_o_port_a_handle);
-        pAwrite = pAwrite & ~A0 & ~A1 & ~A3; //turn off all anodes but 1
-        pAwrite |= A2;
+        pAwrite = pAwrite |A0 |A1 |A3; //turn off all anodes but 1
+        pAwrite &= ~A2;
         out8(d_i_o_port_a_handle, pAwrite);
-        out8(d_i_o_port_b_handle, dis2);
+        out8(d_i_o_port_b_handle, ~dis1);
+        //printf("%x\n",(uint8_t)~dis1);
         //sleep
         pid = MsgReceivePulse(chid,&pulse,  sizeof( pulse ),NULL);
 
         pAwrite = in8(d_i_o_port_a_handle);
-        pAwrite = pAwrite & ~A0 & ~A1 & ~A2; //turn off all anodes but 1
-        pAwrite |= A3;
+        pAwrite = pAwrite |A0 |A1 |A2; //turn off all anodes but 1
+        pAwrite &= ~A3;
         out8(d_i_o_port_a_handle, pAwrite);
-        out8(d_i_o_port_b_handle, dis3);
+        out8(d_i_o_port_b_handle, ~dis0);
+        //printf("%x\n",(uint8_t)~dis0);
         //sleep TODO all sleep notes need timers for 'right' freq (1/4 50hz?)
         pid = MsgReceivePulse(chid,&pulse,  sizeof( pulse ),NULL);
     }   //end while _run 
@@ -580,7 +606,7 @@ int Display::_refreshElapseDisplay (uint8_t* d0, uint8_t* d1, uint8_t* d2, uint8
     //minutes
     min = floor(cetime/60);
     sd0 = floor( min/10);
-    sd1 = floor (min-10*sd1);
+    sd1 = floor (min-10*sd0);
     *d0 = digitToSegment(sd0);
     *d1 = digitToSegment(sd1);
     //seconds
@@ -624,7 +650,7 @@ int Display::_refreshDistDisplay(uint8_t* d0, uint8_t* d1, uint8_t* d2, uint8_t*
         *d1 = digitToSegment(tens);
         //get ones digit
         if (temp >=10) {
-            temp = temp- dec*10;
+            temp = temp- tens*10;
         }
         ones = floor(temp);
         *d2 = digitToSegment(ones);
@@ -635,8 +661,9 @@ int Display::_refreshDistDisplay(uint8_t* d0, uint8_t* d1, uint8_t* d2, uint8_t*
         dec = temp*10 ;
         *d3 = digitToSegment(dec);
         *d3 |=SDP;
-        return 1; //TODO error code checking
+        //return 1; //TODO error code checking
     } //end non-suppressing leading zeroes
+    return 1; //TODO error code checking
 }
 
 /**

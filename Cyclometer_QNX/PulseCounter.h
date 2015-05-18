@@ -38,6 +38,7 @@
 /**IRQ for mag pulses*/
 const struct sigevent *interruptReceived(void *arg, int id);
 volatile unsigned _pulseCount; //counts the pulses via IRQ, need to make when clearing
+uintptr_t status_handle;  /* for clearing interrupt*/
 class PulseCounter {
 public:
 PulseCounter();
@@ -57,4 +58,8 @@ private:
 //TODO move globals
 //volatile unsigned _pulseCount; //counts the pulses via IRQ, need to make when clearing
 int interruptID; 
+
+uintptr_t ctrl_handle;
+uintptr_t data_handle;
+//uintptr_t status_handle;  /* added by Roy */
 };

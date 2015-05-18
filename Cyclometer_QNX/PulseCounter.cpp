@@ -6,11 +6,13 @@
 
 #include "PulseCounter.h"
 
-#define TEST_PULSE_COUNTER 1
+//#define TEST_PULSE_COUNTER 1
+//#define TEST 1
 
 /**IRQ for mag pulses*/
 const struct sigevent *interruptReceived(void *arg, int id) {
-    atomic_add_value( &_pulseCount, 1 );
+	in8(status_handle);
+    atomic_add_value( &_pulseCount, 1 );printf(".");
     return NULL;
 } 
 
@@ -25,9 +27,7 @@ PulseCounter::~PulseCounter() {
 
 int PulseCounter::init_p_port() {
     int privity_err;
-    uintptr_t ctrl_handle;
-    uintptr_t data_handle;
-    uintptr_t status_handle;  /* added by Roy */
+
     int count;
     char status_byte;  /* added by Roy */
     /* Give this thread root permission to access */
@@ -115,7 +115,7 @@ int main() {
     //start worker threads
 for (int i = 0; i<10; i++){
 	sleep(1);
-	printf("Cnt:%d\n",_pulseCount);
+	printf("Cnt:%u\n",_pulseCount);
 }
     //
 
