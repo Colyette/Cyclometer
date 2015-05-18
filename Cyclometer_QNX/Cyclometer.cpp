@@ -1,7 +1,7 @@
 
 
 #include "Cyclometer.h"
-
+#ifdef IDK_JUST_WANT_TO_COMPILE_DISPLAY_NOW
 //inilize static mutex eventQ control
 std::recursive_mutex Cyclometer::eventQ_mutex;
 
@@ -25,3 +25,4 @@ int Cyclometer::initCyclometer(){
 	}
 
 }
+#endif // IDK_JUST_WANT_TO_COMPILE_DISPLAY_NOW

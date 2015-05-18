@@ -12,6 +12,8 @@
 #include <stdint.h>
 #include <sys/neutrino.h>
 #include <sys/mman.h>
+#include <stdlib.h>
+#include <atomic.h>		/*atomic_add for pulse counting*/
 
 /* The Neutrino IO port used here corresponds to a */
 /* single register which is one byte long */
@@ -34,10 +36,13 @@
 #define MAX_COUNT 60
 
 /**IRQ for mag pulses*/
-const struct sigevent *interruptReceived(void *arg, int id) 
-
+const struct sigevent *interruptReceived(void *arg, int id);
+volatile unsigned _pulseCount; //counts the pulses via IRQ, need to make when clearing
 class PulseCounter {
 public:
+PulseCounter();
+~PulseCounter();
+
 //initialize port for IRQ
 int init_p_port(); 
 
@@ -46,10 +51,10 @@ int run();
 
 void clearPulseCount(){_pulseCount =0;}
 
-unsigned readPulseCount(){return _pulseCount;)
+//unsigned readPulseCount(){return _pulseCount;}
 
 private:
 //TODO move globals
-volatile unsigned _pulseCount; //counts the pulses via IRQ, need to make when clearing
+//volatile unsigned _pulseCount; //counts the pulses via IRQ, need to make when clearing
 int interruptID; 
 };

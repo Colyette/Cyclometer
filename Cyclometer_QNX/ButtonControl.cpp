@@ -6,6 +6,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <pthread.h>
+#include "ButtonControl.h"
 #ifdef IDK_JUST_WANT_TO_COMPILE_DISPLAY_NOW
 /**
  * @brief constructor for button controller. 
@@ -152,12 +153,13 @@ int initButtonPins(){
 
 #ifdef TEST_BUTTON_CONTROLLER
 int main() {
-	ButtonController bContrl;
+	ButtonControl bContrl;
 	bContrl.initButtonPins();
 	//dist.run();
 	//TODO implement run function
 
 	//TODO give display some test events with delays of course
 }
+#endif //TEST_BUTTON_CONTROLLER
 
 #endif //IDK_JUST_WANT_TO_COMPILE_DISPLAY_NOW

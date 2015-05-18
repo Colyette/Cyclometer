@@ -7,22 +7,11 @@
 
 #include "Display.h"
 
-#include <stdio.h>
-#include <sys/neutrino.h> /* for ThreadCtl() */
-#include <sys/mman.h>     /* for mmap_device_io() */
-#include <hw/inout.h>     /* for in*() and out*() functions */
-#include <assert.h>			/* for timer's assert */
-#include <stdlib.h> //exit()
-#include <math.h> 		//for floor and round functions
-#include <sys/netmgr.h> 	//channel constants like ND_LOCAL_NODE
-
-
-
 #define POLL_RATE (13) //frequency for 7 seg display ~50/4 Hz
 
 #define ELAPSE_RES (1*10^9)	 //1 second resolution
 
-#define TEST_DISPLAY 1 	//activates the main for display tests
+//#define TEST_DISPLAY 1 	//activates the main for display tests
 
 void * DisplayRefreshHelper(void* instance) {
 	Display* c_instance = (Display*) instance;
@@ -136,24 +125,26 @@ int Display::initDIO(){
  * @brief starts the statemachine for the display.
  * @precon: DIO is initialized
  */
-int run(){ //TODO maybe initialize DIO in run???
+int Display::run(){ //TODO maybe initialize DIO in run???
     //run refresh display thread
     if (pthread_create (&segmentRunner, NULL, DisplayRefreshHelper, this)) { 
         printf("Display MainThread: error creating dio Display processing thread\n");
-        return;
+        return -1;
     }
 	//run elaspe timer
  	if (pthread_create (&eTimerThread, NULL, DisplayElapseTimerHelper, this)) { 
         printf("Display MainThread: error creating elapse timer thread\n");
-        return;
+        return-2;
     }
     //check for changing states
     while (1) {
-	// check for next event recognized
-	if (curEvent !=NUM_EVENTS) { //a new event was trigggered
-	// process the event
-        runDisplayStateMachine();
+    	// check for next event recognized
+    	if (curEvent !=NUM_EVENTS) { //a new event was trigggered
+    		// process the event
+    		runDisplayStateMachine();
+    	}
     }
+	return 1;
 }
 
 /**
@@ -184,7 +175,7 @@ void Display::_resetState() {
 	switch (curSubr) {
 		case INIT_DATA:
 			Init = 1;
-			mode = 0; //manual
+			AUTO = 0; //manual
 			TCalcFlg =0; //calc off
 			unit = 0; //unit kph
 			tireSize = 210; 
@@ -216,7 +207,7 @@ void Display::_resetState() {
 					}
 					break;
 				case s_press:
-					if (INIT) {
+					if (Init) {
 						// maybe spawn timer in here instead.. or clr accum
 						cetime = 0;
 						//go to speed display
@@ -306,7 +297,7 @@ void Display::_mainState() {
     	case ELAPSE_DISPLAY:
 			switch (curEvent) {
 				case m_press:
-					if (curSub == SPEED_DISPLAY;) {
+					if (curSub == SPEED_DISPLAY) {
 						curSub = DISTANCE_DISPLAY;
 					} else {
 						curSub = SPEED_DISPLAY;

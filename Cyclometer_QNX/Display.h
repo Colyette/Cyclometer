@@ -9,6 +9,15 @@
 
 #include <stdint.h>
 #include <pthread.h>
+#include <stdio.h>
+#include <sys/neutrino.h> /* for ThreadCtl() */
+#include <sys/mman.h>     /* for mmap_device_io() */
+#include <hw/inout.h>     /* for in*() and out*() functions */
+#include <assert.h>			/* for timer's assert */
+#include <stdlib.h> //exit()
+#include <math.h> 		//for floor and round functions
+#include <sys/netmgr.h> 	//channel constants like ND_LOCAL_NODE
+
 #include "events.h"
 
 //7 segment pins
@@ -50,8 +59,7 @@ public:
 //reset substates
 enum display_reset_state {INIT_DATA,UNIT_SELECT, SET_TIRE_SIZE, M_HOLD_WAIT, TIRE_AUTO, NUM_R_STATES};
 //main substates
-enum display_main_state {SPEED_DISPLAY,DISTANCE_DISPLAY,ELAPSE_DISPLAY,
-,NUM_M_STATES};
+enum display_main_state {SPEED_DISPLAY,DISTANCE_DISPLAY,ELAPSE_DISPLAY,NUM_M_STATES};
 //substates
 enum display_super_state {RESET,MAIN,PO_RESET,NUM_MAIN_STATES};
 
@@ -81,7 +89,7 @@ int _refreshTireDisplay		(uint8_t* d0, uint8_t* d1, uint8_t* d2, uint8_t* d3);
 int runTimer();
 
 //passed the last event triggered into Display class
-void eventUpdate( event lastEvent){curEvent = lastEvent;}
+void eventUpdate( events lastEvent){curEvent = lastEvent;}
 
 private:
 //for processing if Display is in the Reset state
@@ -93,7 +101,7 @@ void _mainState();
 int startTimeout(int time_ns);
 int timeout();
 struct _pulse tmpulse; //for timer msg for timeout
-int timchid,tmpid; //for target of timeout timer msg passing 
+int tmchid,tmpid; //for target of timeout timer msg passing
 
 
 //set Port A and B to output
@@ -134,6 +142,6 @@ int AUTO;		//manual or auto, 0 man, 1 auto
 int TCalcFlg; //flag for determining if the trip calculation are on
 
 //current event triggered
-event curEvent;
+events curEvent;
 };
 #endif //DISPLAY_H

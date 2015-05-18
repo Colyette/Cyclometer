@@ -6,6 +6,8 @@
 
 #include "PulseCounter.h"
 
+#define TEST_PULSE_COUNTER 1
+
 /**IRQ for mag pulses*/
 const struct sigevent *interruptReceived(void *arg, int id) {
     atomic_add_value( &_pulseCount, 1 );
@@ -102,16 +104,19 @@ int main() {
         return EXIT_FAILURE;
     } 
     // attach interrupt for ack pin
-    interruptID = InterruptAttach(PARALLEL_IRQ, interruptReceived, this,
-        sizeof(this), 0);
-    if (interruptID == -1) {
-        fprintf(stderr, "can't attach to IRQ %d\n", PARALLEL_IRQ);
-        perror(NULL);
-        exit(EXIT_FAILURE);
-    }
-
+//    interruptID = InterruptAttach(PARALLEL_IRQ, interruptReceived, this,
+//        sizeof(this), 0);
+//    if (interruptID == -1) {
+//        fprintf(stderr, "can't attach to IRQ %d\n", PARALLEL_IRQ);
+//        perror(NULL);
+//        exit(EXIT_FAILURE);
+//    }
+    pc.run();
     //start worker threads
-
+for (int i = 0; i<10; i++){
+	sleep(1);
+	printf("Cnt:%d\n",_pulseCount);
+}
     //
 
     return 0;

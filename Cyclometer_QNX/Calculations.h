@@ -6,6 +6,8 @@
 #ifndef CALCULATIONS_H
 #define CALCULATIONS_H
 
+#include "events.h"
+
 #define ACCUM_TIMEOUT_NS	(830000000)
 
 class Calculations {
@@ -33,9 +35,9 @@ public:
 	int _InitializeAccumTimer(long nsfreq, int pulseid);
 
 	//passed the last event triggered to Calculations class
-	void eventUpdate( event lastEvent){curEvent = lastEvent;}
+	void eventUpdate( events lastEvent){curEvent = lastEvent;}
 private:
-	event curEvent;
+	events curEvent;
 
 	double _speed;
 	double _avg;
