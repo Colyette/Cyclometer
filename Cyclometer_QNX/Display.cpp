@@ -7,7 +7,7 @@
 
 #include "Display.h"
 
-#define POLL_RATE (50000000)//(13) //frequency for 7 seg display ~50/4 Hz
+#define POLL_RATE (5000000)//(13) //frequency for 7 seg display ~50/4 Hz
 
 #define ELAPSE_RES (1*10^9)	 //1 second resolution
 
@@ -42,7 +42,10 @@ Display::Display(){
 #ifdef TEST_DISPLAY
     printf("Testing with feed values for speed,avg,dist,time,unit,tiresize\n");
     //for testing the display format without implementing the state machine
-    curSubr = UNIT_SELECT;
+    curSuper = MAIN;
+    curSub = SPEED_DISPLAY;
+    curSubr = NUM_R_STATES;
+
     //values
     cspeed=60;
     cavg = 20;
@@ -438,7 +441,7 @@ uint8_t Display::digitToSegment(int digit) {
             converted = 0b01100110;
             break;
         case 5:
-            converted = 0b01101111;
+            converted = 0b01101101;
             break;
         case 6:
             converted = 0b01111101;
@@ -450,7 +453,7 @@ uint8_t Display::digitToSegment(int digit) {
             converted = 0b01111111;
             break;
         case 9:
-            converted = 0b01001111;
+            converted = 0b01101111;
             break;
         default:
             printf("not a single digit value\n");
@@ -476,7 +479,7 @@ void Display::refreshDisplay(){
     while (_run) {
         //check state to formate diplay correctly
         //use some flg set after calc update?
-#ifndef TEST_DISPLAY
+//#ifndef TEST_DISPLAY //logic doesn't really effect display timing
         switch (curSuper) {
             case RESET:
                 switch (curSubr) {
@@ -497,7 +500,7 @@ void Display::refreshDisplay(){
                         dis3 = digitToSegment(7); //TODO actual circumference with decimal masking
                     	break; //for preceding 3 states same display
                     default:
-                        printf("not a valide reset state\n");
+                        printf("not a valid reset state\n");
                         break;
                 }//end reset cases
                 break;
@@ -506,11 +509,12 @@ void Display::refreshDisplay(){
                 switch (curSub) {
                     case SPEED_DISPLAY:
                         //TODO fix pulse counter for tenth decimal values as pre requirements
-                        _refreshSpeedDisplay(&dis0, &dis1, &dis2, &dis3);  //TODO error check return
-                        dis0 = digitToSegment(9);
-                        dis1 = digitToSegment(8);
-                        dis2 = digitToSegment(7);
-                        dis3 = digitToSegment(8);
+                      //TODO not going here for some reason printf(".");
+                    	_refreshSpeedDisplay(&dis0, &dis1, &dis2, &dis3);  //TODO error check return
+//                        dis0 = digitToSegment(9);
+//                        dis1 = digitToSegment(8);
+//                        dis2 = digitToSegment(7);
+//                        dis3 = digitToSegment(8);
                         break;
                     case DISTANCE_DISPLAY:
                         _refreshDistDisplay(&dis0, &dis1, &dis2, &dis3);  //TODO error check return
@@ -541,16 +545,17 @@ void Display::refreshDisplay(){
                 printf("Not in a valid display state\n");
                 break;
         }
-#endif //TEST_DISPLAY
+//#endif //TEST_DISPLAY
 
 //TODO might want to separate state/display determination for better display refresh w/o num change
 //TODO switching order dist0 == an3
         //TODO segments and anodes are active low?
-#ifdef TEST_DISPLAY
-        dis0=digitToSegment(9);
-        dis1= digitToSegment(0);
-        dis2=digitToSegment(7);
-        dis3=digitToSegment(8);
+#ifdef TEST_DISPLAY_FEED
+        dis0=digitToSegment(1);
+        dis1= digitToSegment(2);
+        dis2=digitToSegment(5);
+        dis3=digitToSegment(9);
+       // dis0=dis1=dis2=dis3=0xFF;
 #endif //TEST_DISPLAY
 
         //display for each digit/anode
@@ -665,7 +670,7 @@ int Display::_refreshDistDisplay(uint8_t* d0, uint8_t* d1, uint8_t* d2, uint8_t*
     } //end non-suppressing leading zeroes
     return 1; //TODO error code checking
 }
-
+int flip =1;
 /**
  * @brief From the current speed and the average speed the segments values 
  * are updated into param'd variables for each for the next refresh
@@ -687,6 +692,9 @@ int Display::_refreshSpeedDisplay(uint8_t* d0, uint8_t* d1, uint8_t* d2, uint8_t
         *d0 = digitToSegment(s1);
         *d1 = digitToSegment(s2);
     }
+    if (flip) {
+    	printf("speed: %f %f\n",s1,s2);
+    }
 
     //avg speed
     if ( (cavg <10) & (cavg >0) ) {  //less than 10, use decimal
@@ -702,6 +710,10 @@ int Display::_refreshSpeedDisplay(uint8_t* d0, uint8_t* d1, uint8_t* d2, uint8_t
         *d2 = digitToSegment(a1);
         *d3 = digitToSegment(a2);
     }
+    if (flip) {
+        	printf("avg: %f %f\n",a1,a2);
+        }
+    flip =0;
     return 1;
 }
 
