@@ -6,12 +6,16 @@
  */
 
 #include "Display.h"
+#include "WheelSensor.h"
+#include "PulseCounter.h"
+//
+#include <pthread.h>
 
 #define POLL_RATE (5000000)//(13) //frequency for 7 seg display ~50/4 Hz
 
 #define ELAPSE_RES (1*10^9)	 //1 second resolution
 
-#define TEST_DISPLAY 1 	//activates the main for display tests
+#define TEST_DISPLAY 0 	//activates the main for display tests
 
 void * DisplayRefreshHelper(void* instance) {
 	Display* c_instance = (Display*) instance;
@@ -757,6 +761,12 @@ int Display::_refreshTireDisplay(uint8_t* d0, uint8_t* d1, uint8_t* d2, uint8_t*
 //
 #ifdef TEST_DISPLAY
 int main() {
+	printf("Initializing Display\n");
+	WheelSensor * wheelSensor = new WheelSensor();
+	pthread_create(NULL, NULL, startWheelSensor, wheelSensor);
+	PulseCounter * pulseCounter = new PulseCounter();
+	pthread_create(NULL, NULL, startPulseCounter, pulseCounter);
+	//wheelSensor->run();
 	Display dist;
 	dist.initDIO();
 	dist.run();

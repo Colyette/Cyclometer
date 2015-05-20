@@ -35,10 +35,12 @@
 #define HIGH 0xFF
 #define MAX_COUNT 60
 
+void * startPulseCounter(void *);
+
 /**IRQ for mag pulses*/
 const struct sigevent *interruptReceived(void *arg, int id);
-volatile unsigned _pulseCount; //counts the pulses via IRQ, need to make when clearing
-uintptr_t status_handle;  /* for clearing interrupt*/
+
+
 class PulseCounter {
 public:
 PulseCounter();
@@ -50,7 +52,7 @@ int init_p_port();
 //attaches the interrupt of notifiying pulses
 int run();
 
-void clearPulseCount(){_pulseCount =0;}
+
 
 //unsigned readPulseCount(){return _pulseCount;}
 
@@ -61,5 +63,5 @@ int interruptID;
 
 uintptr_t ctrl_handle;
 uintptr_t data_handle;
-//uintptr_t status_handle;  /* added by Roy */
+//uintptr_t Cyclo_status_handle;  /* added by Roy */
 };

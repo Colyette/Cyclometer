@@ -66,7 +66,9 @@ void * startWheelSensor(void * sensor)
 /* Runs the logic for the Wheel Sensor */
 void WheelSensor::run()
 {
+	printf("Starting Wheel Sensor\n");
 	_interruptID = InterruptAttach(DIO_IRQ, WheelinterruptReceived, this, sizeof(this), 0);
+	//_interruptID = InterruptAttach(0, WheelinterruptReceived, this, sizeof(this), 0);
 	if (_interruptID == -1) {
 		fprintf(stderr, "can't attach to IRQ %d\n", DIO_IRQ);
 		perror(NULL);
