@@ -52,7 +52,7 @@ Display::Display(){
     cdistance =205.1 ;
     cetime= 10000;     //in seconds
     unit=0;       //flg like 0 or 1
-    tireSize=240;
+    tireSize=210;
 #endif
 }
 
