@@ -14,6 +14,17 @@
 
 #include "WheelSensor.h"
 
+const struct sigevent * WheelinterruptReceived(void *arg, int id)
+{
+	uintptr_t clear_handle;
+	clear_handle = mmap_device_io( PORT_LENGTH, CLEAR_ADDRESS );
+
+	((WheelSensor *)arg)->updateCount();
+	out8( clear_handle, CLEAR );
+	printf("Wheel Signal");
+	return NULL;
+}
+
 WheelSensor::WheelSensor() {
 	int privity_err;
 	uintptr_t ctrl_handle;
@@ -55,7 +66,7 @@ void * startWheelSensor(void * sensor)
 /* Runs the logic for the Wheel Sensor */
 void WheelSensor::run()
 {
-	_interruptID = InterruptAttach(DIO_IRQ, interruptReceived, this, sizeof(this), 0);
+	_interruptID = InterruptAttach(DIO_IRQ, WheelinterruptReceived, this, sizeof(this), 0);
 	if (_interruptID == -1) {
 		fprintf(stderr, "can't attach to IRQ %d\n", DIO_IRQ);
 		perror(NULL);
@@ -82,12 +93,4 @@ void WheelSensor::updateCount()
 	_pulseCount++;
 }
 
-const struct sigevent * interruptReceived(void *arg, int id)
-{
-	uintptr_t clear_handle;
-	clear_handle = mmap_device_io( PORT_LENGTH, CLEAR_ADDRESS );
 
-	((WheelSensor *)arg)->updateCount();
-	out8( clear_handle, CLEAR );
-	return NULL;
-}

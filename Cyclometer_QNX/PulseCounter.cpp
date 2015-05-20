@@ -10,9 +10,10 @@
 //#define TEST 1
 
 /**IRQ for mag pulses*/
-const struct sigevent *interruptReceived(void *arg, int id) {
+const struct sigevent * PulseinterruptReceived(void *arg, int id) {
 	in8(status_handle);
     atomic_add_value( &_pulseCount, 1 );printf(".");
+    printf("Pulse Signal");
     return NULL;
 } 
 
@@ -83,7 +84,7 @@ int PulseCounter::init_p_port() {
 }
 
 int PulseCounter::run() {
-	interruptID = InterruptAttach(PARALLEL_IRQ, interruptReceived, this, sizeof(this), 0);
+	interruptID = InterruptAttach(PARALLEL_IRQ, PulseinterruptReceived, this, sizeof(this), 0);
 	if (interruptID == -1) {
 		fprintf(stderr, "can't attach to IRQ %d\n", PARALLEL_IRQ);
 		perror(NULL);
