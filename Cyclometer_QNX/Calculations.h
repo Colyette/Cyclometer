@@ -6,22 +6,24 @@
 #ifndef CALCULATIONS_H
 #define CALCULATIONS_H
 
+
 #include "events.h"
 #include "WheelSensor.h"
+#include <cmath.h> 		//trip and current speed calculations
 
 #define ACCUM_TIMEOUT_NS	(830000000)
 
 class Calculations {
 public:
-	enum calcStates {ACCUM_WAIT=10,DET_MOTION,DET_TRIP_CALC,TRIP_CALC_UPDATE,
-		SPEED_UPDATE,PO_RESET_CALC,NUM_CALC_STATES};
+	enum calcStates {ACCUM_WAIT=10,DET_MOTION,SPEED_UPDATE,DET_TRIP_CALC,TRIP_CALC_UPDATE,
+PO_RESET_CALC,NUM_CALC_STATES};
 	
 	Calculations();
 	~Calculations();
 
-	int calcSpeed();
+	int calcSpeed(int pulseCount);
 	int calcAvgSpeed();
-	int calcDistance();
+	int calcDistance(int pulseCount);
 
 	
 	int runCalculations();
@@ -43,9 +45,16 @@ public:
 private:
 	events curEvent;
 
+	calcStates curState;	
+
 	double _speed;
 	double _avg;
 	double _dist;
+
+	//int WheelRot;
+	//int tireSize;
+	//int cetime
+
 	//reference to a pre-init WheelSensor
 	WheelSensor* pc;	//for monitoring the pulse counts
 };
