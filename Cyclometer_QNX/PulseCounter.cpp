@@ -9,10 +9,14 @@
 //#define TEST_PULSE_COUNTER 1
 //#define TEST 1
 
+volatile unsigned Cyclo_pulseCount; //counts the pulses via IRQ, need to make when clearing
+uintptr_t Cyclo_status_handle;  /* for clearing interrupt*/
+
 /**IRQ for mag pulses*/
-const struct sigevent *interruptReceived(void *arg, int id) {
-	in8(status_handle);
-    atomic_add_value( &_pulseCount, 1 );printf(".");
+const struct sigevent * PulseinterruptReceived(void *arg, int id) {
+	in8(Cyclo_status_handle);
+    atomic_add_value( &Cyclo_pulseCount, 1 );printf(".");
+    printf("Pulse Signal");
     return NULL;
 } 
 
@@ -45,8 +49,8 @@ int PulseCounter::init_p_port() {
         return EXIT_FAILURE;
     }
     /* Get a handle to the parallel port's Control Register */
-    status_handle = mmap_device_io( PORT_LENGTH, STATUS_ADDRESS );
-    if ( status_handle == MAP_DEVICE_FAILED ) {
+    Cyclo_status_handle = mmap_device_io( PORT_LENGTH, STATUS_ADDRESS );
+    if ( Cyclo_status_handle == MAP_DEVICE_FAILED ) {
         perror( "status map failed" );
         return EXIT_FAILURE; 
     }
@@ -65,13 +69,13 @@ int PulseCounter::init_p_port() {
         /* Output a byte of lows to the data lines */
         out8( data_handle, LOW );
         printf( "Low\n" );
-        status_byte = in8( status_handle);
+        status_byte = in8( Cyclo_status_handle);
         printf( "status byte = %x \n", status_byte ); /* added by Roy */
         sleep( 1 );
         /* Output a byte of highs to the data lines */
         out8( data_handle, HIGH );
         printf( "High\n" );
-        status_byte = in8( status_handle);
+        status_byte = in8( Cyclo_status_handle);
         printf( "status byte = %x \n", status_byte ); /* added by Roy */
         sleep( 1 );
     }
@@ -83,7 +87,8 @@ int PulseCounter::init_p_port() {
 }
 
 int PulseCounter::run() {
-	interruptID = InterruptAttach(PARALLEL_IRQ, interruptReceived, this, sizeof(this), 0);
+	printf("Starting Pulse Counter\n");
+	interruptID = InterruptAttach(PARALLEL_IRQ, PulseinterruptReceived, this, sizeof(this), 0);
 	if (interruptID == -1) {
 		fprintf(stderr, "can't attach to IRQ %d\n", PARALLEL_IRQ);
 		perror(NULL);
@@ -92,6 +97,14 @@ int PulseCounter::run() {
 	return 1;
 	
 }
+
+void * startPulseCounter(void * counter)
+{
+	((PulseCounter *)counter)->run();
+	return NULL;
+}
+
+void clearPulseCount(){Cyclo_pulseCount =0;}
 
 
 #ifdef TEST_PULSE_COUNTER
@@ -115,7 +128,7 @@ int main() {
     //start worker threads
 for (int i = 0; i<10; i++){
 	sleep(1);
-	printf("Cnt:%u\n",_pulseCount);
+	printf("Cnt:%u\n",Cyclo_pulseCount);
 }
     //
 

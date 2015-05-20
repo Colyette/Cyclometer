@@ -6,12 +6,16 @@
  */
 
 #include "Display.h"
+#include "WheelSensor.h"
+#include "PulseCounter.h"
+//
+#include <pthread.h>
 
 #define POLL_RATE (5000000)//(13) //frequency for 7 seg display ~50/4 Hz
 
 #define ELAPSE_RES (1*10^9)	 //1 second resolution
 
-#define TEST_DISPLAY 1 	//activates the main for display tests
+#define TEST_DISPLAY 0 	//activates the main for display tests
 
 void * DisplayRefreshHelper(void* instance) {
 	Display* c_instance = (Display*) instance;
@@ -47,12 +51,12 @@ Display::Display(){
     curSubr = NUM_R_STATES;
 
     //values
-    cspeed=60;
-    cavg = 20;
+    cspeed= 8.6;
+    cavg = 7.2;
     cdistance =205.1 ;
     cetime= 10000;     //in seconds
     unit=0;       //flg like 0 or 1
-    tireSize=210;
+    tireSize=240;
 #endif
 }
 
@@ -72,7 +76,7 @@ int Display::runTimer(){
 //TODO may have to look into pulse ID other than 1
 	while(_run) {
 		pid = MsgReceivePulse(chid,&pulse,  sizeof( pulse ),NULL);
-		if (AUTO && ()) { // TODO Auto mode, and motion is detected
+		if (AUTO && (true)) { // TODO Auto mode, and motion is detected (REPLACE 'TRUE')
 			cetime++;
 		}
 		else if (0) { //TODO Manual Mode and calc is on
@@ -250,7 +254,7 @@ void Display::_resetState() {
 			}           
         	break; //for preceding 3 states same display
        	default:
-                	printf("not a valide reset state\n");
+                	printf("not a valid reset state\n");
                 	break; 
     }//end reset cases
 	
@@ -350,7 +354,7 @@ void Display::_mainState() {
 			}
 			break;
        	default:
-        	printf("not a valide reset state\n");
+        	printf("not a valid reset state\n");
         	break; 
     }//end reset cases
 	
@@ -459,7 +463,7 @@ uint8_t Display::digitToSegment(int digit) {
             converted = 0b01101111;
             break;
         default:
-            printf("not a single digit value\n");
+            printf("not a single digit value: %d\n", digit);
             converted = 0;
             break;
     }
@@ -614,14 +618,14 @@ int Display::_refreshElapseDisplay (uint8_t* d0, uint8_t* d1, uint8_t* d2, uint8
     int min, sec, sd0, sd1, sd2, sd3;
     //minutes
     min = floor(cetime/60);
-    sd0 = floor( min/10);
-    sd1 = floor (min-10*sd0);
+    sd0 = floor(min/10);
+    sd1 = floor(fmod(min,10));
     *d0 = digitToSegment(sd0);
     *d1 = digitToSegment(sd1);
     //seconds
-    sec = floor (cetime - min*60 );
+    sec = floor(cetime - min*60 );
     sd2 = floor(sec/10);
-    sd3 = floor(sec - 10*sd2);
+    sd3 = floor(fmod(sec,10));
     *d2 = digitToSegment(sd2);
     *d3 = digitToSegment(sd3);
     return 1;
@@ -684,15 +688,15 @@ int Display::_refreshSpeedDisplay(uint8_t* d0, uint8_t* d1, uint8_t* d2, uint8_t
     double s1,s2,a1,a2; 
     //current speed dis
     if ( (cspeed <10) & (cspeed >0) ) { //less than 10, use decimal
-        s1 = floor(cspeed);
-        s2 = round( (cspeed - floor(cspeed) )*10 );
+        s1 = floor(fmod(cspeed,10));
+        s2 = round(fmod(cspeed*10,10));
         *d0 = digitToSegment (s1);
         *d1 = digitToSegment (s2);
         *d1 |= SDP; //set decimal
     }else{
         //greater than 10 
         s1 = floor(cspeed/10);
-        s2 = floor ( cspeed - s1*10); //no check for over 100
+        s2 = floor(fmod(cspeed,10)); //no check for over 100
         *d0 = digitToSegment(s1);
         *d1 = digitToSegment(s2);
     }
@@ -702,15 +706,15 @@ int Display::_refreshSpeedDisplay(uint8_t* d0, uint8_t* d1, uint8_t* d2, uint8_t
 
     //avg speed
     if ( (cavg <10) & (cavg >0) ) {  //less than 10, use decimal
-        a1 = floor(cavg);
-        a2 = round( (cavg - floor(cavg) )*10 );
+        a1 = floor(fmod(cavg,10));
+        a2 = round(fmod(cavg*10,10));
         *d2 = digitToSegment (a1);
         *d3 = digitToSegment (a2);
         *d3 |= SDP; //set decimal
     }else{
         // 
-        a1 = floor(cavg);
-        a2 = floor (cavg - a1*10);
+        a1 = floor(cavg/10);
+        a2 = floor(fmod(cavg,10));
         *d2 = digitToSegment(a1);
         *d3 = digitToSegment(a2);
     }
@@ -757,6 +761,12 @@ int Display::_refreshTireDisplay(uint8_t* d0, uint8_t* d1, uint8_t* d2, uint8_t*
 //
 #ifdef TEST_DISPLAY
 int main() {
+	printf("Initializing Display\n");
+	WheelSensor * wheelSensor = new WheelSensor();
+	pthread_create(NULL, NULL, startWheelSensor, wheelSensor);
+	PulseCounter * pulseCounter = new PulseCounter();
+	pthread_create(NULL, NULL, startPulseCounter, pulseCounter);
+	//wheelSensor->run();
 	Display dist;
 	dist.initDIO();
 	dist.run();
