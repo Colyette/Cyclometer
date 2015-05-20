@@ -14,7 +14,7 @@
 #define SET_BUTTON          (0x2)
 #define START_STOP_BUTTON   (0x03)
 
-
+//TODO make LPT for buttons since ports A and B are used for display
 
 class  ButtonControl{
 public:
@@ -25,7 +25,7 @@ public:
     ~ButtonControl();
 
     /**
-     * @brief the state machine ran to interprete events...
+     * @brief the state machine ran to interprete events to throw
      */
     int runButtonControl();
 
@@ -37,7 +37,8 @@ public:
     //init the pins for listening to buttons
     int initButtonPins();
 
-	void throwEvent();
+	//mech for throwing an event to the Cyclometer
+	void throwEvent(events e);
 
 	//passed the last event triggered into buttoncontroller class, MAYNOT BE NEEDED only tm()
 	void eventUpdate( events lastEvent){curEvent = lastEvent;}
