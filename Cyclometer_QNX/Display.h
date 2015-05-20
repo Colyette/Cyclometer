@@ -85,10 +85,10 @@ int _refreshElapseDisplay	(uint8_t* d0, uint8_t* d1, uint8_t* d2, uint8_t* d3);
 int _refreshUnitDisplay		(uint8_t* d0, uint8_t* d1, uint8_t* d2, uint8_t* d3);
 int _refreshTireDisplay		(uint8_t* d0, uint8_t* d1, uint8_t* d2, uint8_t* d3);
 
-//elaspe timer action
+//elaspe timer action, spawned thread
 int runTimer();
 
-//passed the last event triggered into Display class
+//pass the last event triggered into Display class
 void eventUpdate( events lastEvent){curEvent = lastEvent;}
 
 private:
@@ -116,32 +116,32 @@ int _InitializeSegmentTimer(long nsfreq, int pulseid);
 //converts a digit 0-9 to encoded 7 segment value
 uint8_t digitToSegment(int digit);
 
-int _run; //internal flg for syncronizing threads...
+int _run; //internal flg for syncronizing threads to close
+
 //dio on data ack
 uintptr_t d_i_o_control_handle ;     // control register for ports A, B, and C
 uintptr_t d_i_o_port_a_handle ;
 uintptr_t d_i_o_port_b_handle ;
  
-pthread_t eTimerThread;
-pthread_t segmentRunner;
-display_super_state curSuper; //dictates whether to use curSub or curSubr
-display_main_state curSub;
-display_reset_state curSubr;
+pthread_t eTimerThread;			//PID for elaspe timer thread
+pthread_t segmentRunner;		//PID for the 4 dig 7 seg display thread
+display_super_state curSuper; 	//dictates whether to use curSub or curSubr, SuperState
+display_main_state curSub;		//main substates
+display_reset_state curSubr;	//reset substates
 
 //values
-double cspeed;
-double cavg;
-double cdistance;
 int cetime;     //in seconds
 int unit;       //flg like 0 or 1
 int tireSize;   //in cm
-
-//
-int Init; //init flg for reset
+int Init; 		//init flg for reset
 int AUTO;		//manual or auto, 0 man, 1 auto
-int TCalcFlg; //flag for determining if the trip calculation are on
+int TCalcFlg; 	//flag for determining if the trip calculation are on
 
-//current event triggered
-events curEvent;
+//externally modified
+double cspeed;
+double cavg;
+double cdistance;
+int WheelRot; 	//flg for determining if wheel is still rotating
+events curEvent;	//current event triggered
 };
 #endif //DISPLAY_H

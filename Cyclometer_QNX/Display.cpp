@@ -72,7 +72,7 @@ int Display::runTimer(){
 //TODO may have to look into pulse ID other than 1
 	while(_run) {
 		pid = MsgReceivePulse(chid,&pulse,  sizeof( pulse ),NULL);
-		if (0) { // TODO Auto mode, and motion is detected
+		if (AUTO && ()) { // TODO Auto mode, and motion is detected
 			cetime++;
 		}
 		else if (0) { //TODO Manual Mode and calc is on
@@ -422,6 +422,9 @@ int Display::_InitializeSegmentTimer(long nsfreq, int pulseid){
   return chid;
 }
 
+/**
+ * @brief Converts the provided digit into its 8 bit 7 segment display value
+ */
 uint8_t Display::digitToSegment(int digit) {
     uint8_t converted;
     switch (digit) {
@@ -485,25 +488,25 @@ void Display::refreshDisplay(){
                 switch (curSubr) {
                     case UNIT_SELECT:
 
-                        _refreshUnitDisplay(&dis0,&dis1,&dis2,&dis3);
-                        dis0 = dis1 = dis2 =0; //blank the displays
-                        dis3 = digitToSegment (1); //TODO actual units variable
+                        _refreshUnitDisplay(&dis0,&dis1,&dis2,&dis3); //TODO test conversion
+//                        dis0 = dis1 = dis2 =0; //blank the displays
+//                        dis3 = digitToSegment (1); //TODO actual units variable
 
                         break;
                     case SET_TIRE_SIZE:
                     case M_HOLD_WAIT:
                     case TIRE_AUTO:
-                        _refreshTireDisplay(&dis0, &dis1, &dis2, &dis3);  //TODO error check return
-                        dis0 = 0; //blank left most display
-                        dis1 = digitToSegment(9);
-                        dis2 = digitToSegment(8);
-                        dis3 = digitToSegment(7); //TODO actual circumference with decimal masking
+                        _refreshTireDisplay(&dis0, &dis1, &dis2, &dis3);  //TODO error check return and test conversion
+//                        dis0 = 0; //blank left most display
+//                        dis1 = digitToSegment(9);
+//                        dis2 = digitToSegment(8);
+//                        dis3 = digitToSegment(7); //TODO actual circumference with decimal masking
                     	break; //for preceding 3 states same display
                     default:
                         printf("not a valid reset state\n");
                         break;
                 }//end reset cases
-                break;
+                break; //RESET SUBSTATE CASE
 
             case MAIN:
                 switch (curSub) {
@@ -518,18 +521,18 @@ void Display::refreshDisplay(){
                         break;
                     case DISTANCE_DISPLAY:
                         _refreshDistDisplay(&dis0, &dis1, &dis2, &dis3);  //TODO error check return
-                        dis0 = digitToSegment(9); //(dec)
-                        dis1 = digitToSegment(8); //(dec)
-                        dis2 = digitToSegment(7); //(dec)
-                        dis3 = digitToSegment(6); //(dec)
-                        dis3 |=SDP;
+//                        dis0 = digitToSegment(9); //(dec)
+//                        dis1 = digitToSegment(8); //(dec)
+//                        dis2 = digitToSegment(7); //(dec)
+//                        dis3 = digitToSegment(6); //(dec)
+//                        dis3 |=SDP;
                         break;
                     case ELAPSE_DISPLAY:
                         _refreshElapseDisplay(&dis0, &dis1, &dis2, &dis3);  //TODO error check return
-                        dis0 = digitToSegment(7); //(d1)
-                        dis1 = digitToSegment(7); //(d2)
-                        dis2 = digitToSegment(6); //(d1)
-                        dis3 = digitToSegment(6); //(d2)
+//                        dis0 = digitToSegment(7); //(d1)
+//                        dis1 = digitToSegment(7); //(d2)
+//                        dis2 = digitToSegment(6); //(d1)
+//                        dis3 = digitToSegment(6); //(d2)
                         break;
 
                     default:
@@ -551,11 +554,12 @@ void Display::refreshDisplay(){
 //TODO switching order dist0 == an3
         //TODO segments and anodes are active low?
 #ifdef TEST_DISPLAY_FEED
-        dis0=digitToSegment(1);
-        dis1= digitToSegment(2);
-        dis2=digitToSegment(5);
-        dis3=digitToSegment(9);
-       // dis0=dis1=dis2=dis3=0xFF;
+//        dis0=digitToSegment(1);
+//        dis1= digitToSegment(2);
+//        dis2=digitToSegment(5);
+//        dis3=digitToSegment(9);
+
+       // dis0=dis1=dis2=dis3=0xFF; //TESTING PORT B DIO
 #endif //TEST_DISPLAY
 
         //display for each digit/anode
