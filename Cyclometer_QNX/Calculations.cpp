@@ -7,26 +7,26 @@
 
 #define WHEEL_TIME_OUT ( 850000000) // .85s
 
-#define TEST_CALCULATIONS 1
+//#define TEST_CALCULATIONS 1
 
 //constructor
-Calculations::Calculations{
+Calculations::Calculations(){
 	_speed = _avg =_dist=0;
 
 #ifdef TEST_CALCULATIONS
 	//Testin Auto calculations at default wheel size
 	//WheelRot=1;
-	int tireSize = 210;
-	int cetime =0;
-	int Auto =1;
-	int TCalcFlg=0;
+	tireSize = 210;
+	cetime =0;
+	Auto =1;
+	TCalcFlg=0;
 #endif
 }
 
 
 //state machine is not really trigger event based, only outside event is poRest
 int Calculations::runCalculationsStateMachine(){
-	int pCnt;
+	int pCnt=0;
 	struct _pulse pulse; //for timer msg
  	int chid,pid; //for target of timer msg passing
 	int _run =1;
@@ -103,6 +103,7 @@ int Calculations::runCalculationsStateMachine(){
 				break;
 		} //end switch curState
 	} //end while
+	return 1;
 }
 
 /**
@@ -121,10 +122,10 @@ int Calculations::calcSpeed(int pulseCount){
 /**
  * @brief Calculates and accumulates the total distance traveled
  */
-int calcDistance(int pulseCount){
-	_distance += pulseCount*(tireSize*pow(10,-5) ); //km
+int Calculations::calcDistance(int pulseCount){
+	_dist += pulseCount*(tireSize*pow(10,-5) ); //km
 #ifdef TEST_CALCULATIONS
-	printf("d:%f\n",_distance);
+	printf("d:%f\n",_dist);
 #endif
 	return 1; 
 }
@@ -133,16 +134,19 @@ int calcDistance(int pulseCount){
  * @brief Does the average speed calculations
  * @precon calcDistance called beforehand for correct distance update
  */
-int calcAvgSpeed(){
+int Calculations::calcAvgSpeed(){
 	//TODO need elapse time
-	_avg = _distance/cetime;
+	_avg = _dist/cetime;
 #ifdef TEST_CALCULATIONS
 	printf("avg:%f\n",_avg);
 #endif
-	return;
+	return 1;
 }
 
-
+int Calculations::throwEvent(events e){
+	//TODO
+	return 1;
+}
 
 //timer for waiting until the next pulse is received
 int Calculations::_InitializeAccumTimer(long nsfreq, int pulseid){

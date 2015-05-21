@@ -9,9 +9,10 @@
 
 #include "events.h"
 #include "WheelSensor.h"
-#include <cmath.h> 		//trip and current speed calculations
+#include <math.h> 		//trip and current speed calculations
 #include <assert.h>			/* for timer's assert */
 #include <sys/netmgr.h> 	//channel constants like ND_LOCAL_NODE
+#include <stdlib.h> //exit()
 
 #define ACCUM_TIMEOUT_NS	(830000000)
 
@@ -35,6 +36,8 @@ PO_RESET_CALC,NUM_CALC_STATES};
 	double getLastSpeed(){return _speed;}
 	double getLastAvg() {return _avg;}
 	double getLastDist(){return _dist;}
+
+	int throwEvent(events e);
 
 	//timer for waiting until the next pulse is received
 	int _InitializeAccumTimer(long nsfreq, int pulseid);
