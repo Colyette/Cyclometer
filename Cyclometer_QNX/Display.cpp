@@ -15,7 +15,7 @@
 
 #define ELAPSE_RES (999999999)	 //~1 second resolution can't do 1s invalid arg
 
-#define TEST_DISPLAY 1 	//activates the main for display tests
+//#define TEST_DISPLAY 1 	//activates the main for display tests
 
 void * DisplayRefreshHelper(void* instance) {
 	Display* c_instance = (Display*) instance;
@@ -770,8 +770,8 @@ int main() {
 	printf("Initializing Display\n");
 	WheelSensor * wheelSensor = new WheelSensor();
 	pthread_create(NULL, NULL, startWheelSensor, wheelSensor);
-	PulseCounter * pulseCounter = new PulseCounter();
-	pthread_create(NULL, NULL, startPulseCounter, pulseCounter);
+//	PulseCounter * pulseCounter = new PulseCounter();
+//	pthread_create(NULL, NULL, startPulseCounter, pulseCounter);
 	//wheelSensor->run();
 	Display dist;
 	dist.initDIO();

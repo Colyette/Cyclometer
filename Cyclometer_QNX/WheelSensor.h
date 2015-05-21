@@ -45,10 +45,11 @@ public:
 
 	void updateCount();
 	
-	void clearCount(){_pulseCount =0;}
+	void clearCount();
 
+	void killRun(){_run=0;}
 private:
-
+	int _run;
 	int _pulseCount;
 	int _pulseHist;
 	int _interruptID;

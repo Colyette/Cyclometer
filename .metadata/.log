@@ -418,3 +418,77 @@ HandlerActivation(commandId=AUTOGEN:::org.eclipse.ui.cheatsheets.actionSet/org.e
 HandlerActivation(commandId=AUTOGEN:::org.eclipse.ui.cheatsheets.actionSet/org.eclipse.ui.cheatsheets.actions.CheatSheetHelpMenuAction,
 	handler=ActionDelegateHandlerProxy(null,org.eclipse.ui.cheatsheets.CheatSheetExtensionFactory:helpMenuAction),
 	expression=AndExpression(ActionSetExpression(org.eclipse.ui.cheatsheets.actionSet,org.eclipse.ui.internal.WorkbenchWindow@10e9df),WorkbenchWindowExpression(org.eclipse.ui.internal.WorkbenchWindow@10e9df)),sourcePriority=16640)
+!SESSION 2015-05-20 22:39:07.311 -----------------------------------------------
+eclipse.buildId=201006232051
+java.version=1.5.0_11
+java.vendor=Sun Microsystems Inc.
+BootLoader constants: OS=win32, ARCH=x86, WS=win32, NL=en_US
+Command-line arguments:  -os win32 -ws win32 -arch x86
+
+!ENTRY org.eclipse.equinox.p2.repository 4 0 2015-05-20 22:39:08.073
+!MESSAGE ProvisioningEventBus could not be obtained. Metadata caches may not be cleaned up properly.
+
+!ENTRY org.eclipse.ui.workbench 2 0 2015-05-20 22:39:14.259
+!MESSAGE A handler conflict occurred.  This may disable some commands.
+!SUBENTRY 1 org.eclipse.ui.workbench 2 0 2015-05-20 22:39:14.259
+!MESSAGE Conflict for 'AUTOGEN:::org.eclipse.ui.cheatsheets.actionSet/org.eclipse.ui.cheatsheets.actions.CheatSheetHelpMenuAction':
+HandlerActivation(commandId=AUTOGEN:::org.eclipse.ui.cheatsheets.actionSet/org.eclipse.ui.cheatsheets.actions.CheatSheetHelpMenuAction,
+	handler=ActionDelegateHandlerProxy(null,org.eclipse.ui.cheatsheets.CheatSheetExtensionFactory:helpMenuAction),
+	expression=AndExpression(ActionSetExpression(org.eclipse.ui.cheatsheets.actionSet,org.eclipse.ui.internal.WorkbenchWindow@10e9df),WorkbenchWindowExpression(org.eclipse.ui.internal.WorkbenchWindow@10e9df)),sourcePriority=16640)
+HandlerActivation(commandId=AUTOGEN:::org.eclipse.ui.cheatsheets.actionSet/org.eclipse.ui.cheatsheets.actions.CheatSheetHelpMenuAction,
+	handler=ActionDelegateHandlerProxy(null,org.eclipse.ui.cheatsheets.CheatSheetExtensionFactory:helpMenuAction),
+	expression=AndExpression(ActionSetExpression(org.eclipse.ui.cheatsheets.actionSet,org.eclipse.ui.internal.WorkbenchWindow@10e9df),WorkbenchWindowExpression(org.eclipse.ui.internal.WorkbenchWindow@10e9df)),sourcePriority=16640)
+
+!ENTRY com.qnx.tools.ide.qde.debug.core 4 0 2015-05-20 23:03:11.674
+!MESSAGE Launch cleaning error
+!SUBENTRY 1 com.qnx.tools.ide.qde.debug.core 4 0 2015-05-20 23:03:11.674
+!MESSAGE Attempt to delete remote file '/tmp/Cyclometer_QNX_gaxc495414321773329217' failed:
+!STACK 0
+java.net.SocketTimeoutException: Read timed out
+	at java.net.SocketInputStream.socketRead0(Native Method)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.io.FilterInputStream.read(Unknown Source)
+	at com.qnx.tools.utils.target.TargetBinary.receiveResponse(Unknown Source)
+	at com.qnx.tools.utils.target.TargetServiceFile.command(Unknown Source)
+	at com.qnx.tools.utils.target.TargetServiceFile.command(Unknown Source)
+	at com.qnx.tools.utils.target.TargetServiceFile.rm(Unknown Source)
+	at com.qnx.tools.utils.target.TargetServiceFile.rm(Unknown Source)
+	at com.qnx.tools.ide.qde.debug.internal.core.QDELaunch$1.run(Unknown Source)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+
+!ENTRY com.qnx.tools.ide.qde.debug.core 4 0 2015-05-20 23:10:46.151
+!MESSAGE Launch cleaning error
+!SUBENTRY 1 com.qnx.tools.ide.qde.debug.core 4 0 2015-05-20 23:10:46.151
+!MESSAGE Attempt to delete remote file '/tmp/Cyclometer_QNX_gaxc495414321777970948' failed:
+!STACK 0
+java.net.SocketTimeoutException: Read timed out
+	at java.net.SocketInputStream.socketRead0(Native Method)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.io.FilterInputStream.read(Unknown Source)
+	at com.qnx.tools.utils.target.TargetBinary.receiveResponse(Unknown Source)
+	at com.qnx.tools.utils.target.TargetServiceFile.command(Unknown Source)
+	at com.qnx.tools.utils.target.TargetServiceFile.command(Unknown Source)
+	at com.qnx.tools.utils.target.TargetServiceFile.rm(Unknown Source)
+	at com.qnx.tools.utils.target.TargetServiceFile.rm(Unknown Source)
+	at com.qnx.tools.ide.qde.debug.internal.core.QDELaunch$1.run(Unknown Source)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+
+!ENTRY com.qnx.tools.ide.qde.debug.core 4 0 2015-05-20 23:21:07.939
+!MESSAGE Launch cleaning error
+!SUBENTRY 1 com.qnx.tools.ide.qde.debug.core 4 0 2015-05-20 23:21:07.939
+!MESSAGE Attempt to delete remote file '/tmp/Cyclometer_QNX_gaxc4954143217838953812' failed:
+!STACK 0
+java.net.SocketTimeoutException: Read timed out
+	at java.net.SocketInputStream.socketRead0(Native Method)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.io.FilterInputStream.read(Unknown Source)
+	at com.qnx.tools.utils.target.TargetBinary.receiveResponse(Unknown Source)
+	at com.qnx.tools.utils.target.TargetServiceFile.command(Unknown Source)
+	at com.qnx.tools.utils.target.TargetServiceFile.command(Unknown Source)
+	at com.qnx.tools.utils.target.TargetServiceFile.rm(Unknown Source)
+	at com.qnx.tools.utils.target.TargetServiceFile.rm(Unknown Source)
+	at com.qnx.tools.ide.qde.debug.internal.core.QDELaunch$1.run(Unknown Source)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)

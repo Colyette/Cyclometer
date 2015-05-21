@@ -19,6 +19,7 @@
 #include <sys/netmgr.h> 	//channel constants like ND_LOCAL_NODE
 
 #include "events.h"
+#include "Calculations.h"	//referencing calc controller
 
 //7 segment pins
 //port A
@@ -91,6 +92,7 @@ int runTimer();
 //pass the last event triggered into Display class
 void eventUpdate( events lastEvent){curEvent = lastEvent;}
 
+void attachCalculations(Calculations* c){calc = c;}
 private:
 //for processing if Display is in the Reset state
 void _resetState();
@@ -143,5 +145,8 @@ double cavg;
 double cdistance;
 int WheelRot; 	//flg for determining if wheel is still rotating
 events curEvent;	//current event triggered
+//reference to Calculations values
+Calculations* calc;
+
 };
 #endif //DISPLAY_H

@@ -7,7 +7,7 @@
 
 #define WHEEL_TIME_OUT ( 850000000) // .85s
 
-//#define TEST_CALCULATIONS 1
+#define TEST_CALCULATIONS 1
 
 //constructor
 Calculations::Calculations(){
@@ -17,10 +17,15 @@ Calculations::Calculations(){
 	//Testin Auto calculations at default wheel size
 	//WheelRot=1;
 	tireSize = 210;
-	cetime =0;
+	cetime =100;
 	Auto =1;
 	TCalcFlg=0;
 #endif
+}
+
+//destructor
+Calculations::~Calculations(){
+
 }
 
 
@@ -36,10 +41,12 @@ int Calculations::runCalculationsStateMachine(){
 			case ACCUM_WAIT: 
 				//wait for tm
 				pid = MsgReceivePulse(chid,&pulse,  sizeof( pulse ),NULL);
+				//::sleep(1);
 				curState =DET_MOTION;
 			case DET_MOTION: //want to fall here anyway
 				//read pulse counter
 				pCnt = pc->getCount();
+				printf("pCnt:%d\n",pCnt);
 				//clear pulse counter
 				pc->clearCount();
 				if (pCnt) { //there is motion
