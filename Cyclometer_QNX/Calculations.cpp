@@ -110,8 +110,8 @@ int Calculations::runCalculationsStateMachine(){
  */
 int Calculations::calcSpeed(int pulseCount){
 	//TODO need wheel size
-	_speed = pulseCount/(pow(10,-9)*WHEEL_TIME_OUT );
-	_speed = _speed * (tireSize*pow(10,-5)/(60*60);  //kph
+	_speed = pulseCount/(WHEEL_TIME_OUT/1000000000.0 );
+	_speed = _speed * (tireSize/100000.0)*(3600.0);  //kph
 #ifdef TEST_CALCULATIONS
 	printf("cs:%f\n",_speed);
 #endif
