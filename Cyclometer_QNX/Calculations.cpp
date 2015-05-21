@@ -8,7 +8,7 @@
 #define WHEEL_TIME_OUT ( 850000000) // .85s
 
 //#define TEST_CALCULATIONS 1
-
+#define TEST_PRINT 1
 /* Starts the thread. This is the function that should be called
  * by pthread_create */
 void * startCalculations(void * sensor)
@@ -41,6 +41,7 @@ Calculations::~Calculations(){
 int Calculations::run() {
 	while (_run) {
 		runCalculationsStateMachine();
+		//::usleep(500000);
 	}
 	return 1;
 }
@@ -66,19 +67,24 @@ int Calculations::runCalculationsStateMachine(){
 				//read pulse counter
 				pCnt = pc->getCount();
 				cetime = s->getEtime(); //for accurate timestamp
-				//printf("pCnt:%d\n",pCnt);
+#ifdef TEST_PRINT
+				printf("pCnt:%d\n",pCnt);
+#endif
 				//clear pulse counter
 				pc->clearCount();
 				if (pCnt) { //there is motion
 					curState = SPEED_UPDATE;
 					//TODO trigger actions
 					//toggleLED(WHEEL_LED)
-					//WheelRot =1;
+					s->setWheelRot(1);
 				} else { //too slow for detection, no motion
 					curState = DET_TRIP_CALC;
 					//TODO trigger actions
 					//TODO maybe a call to display,turnOff(WHEEL_LED);
 					//WheelRot =0;
+					_speed =0;
+					s->setCurSpeed(_speed);
+					s->setWheelRot(0);
 				} //end of transition from DET_MOTION
 				break;
 
@@ -141,9 +147,9 @@ int Calculations::calcSpeed(int pulseCount){
 	tireSize = s->getTireSize();
 	_speed = pulseCount/(WHEEL_TIME_OUT/1000000000.0 );
 	_speed = _speed * (tireSize/100000.0)*(3600.0);  //kph
-//#ifdef TEST_CALCULATIONS
+#ifdef TEST_PRINT
 	printf("cs:%f\n",_speed);
-//#endif
+#endif
 	s->setCurSpeed(_speed);
 	return 1; //TODO may need to return speed and type double 
 }
@@ -153,9 +159,9 @@ int Calculations::calcSpeed(int pulseCount){
  */
 int Calculations::calcDistance(int pulseCount){
 	_dist += pulseCount*(tireSize*pow(10,-5) ); //km
-//#ifdef TEST_CALCULATIONS
+#ifdef TEST_PRINT
 	printf("d:%f\n",_dist);
-//#endif
+#endif
 	s->setDist(_dist);
 	return 1; 
 }
@@ -172,10 +178,10 @@ int Calculations::calcAvgSpeed(){
 	if(hr){
 		_avg = _dist/hr;
 	}
-//#ifdef TEST_CALCULATIONS
+#ifdef TEST_PRINT
 	//printf("et:%d",cetime);
 	printf("avg:%f\n",_avg);
-//#endif
+#endif
 	s->setAvgSpeed(_avg);
 	return 1;
 }

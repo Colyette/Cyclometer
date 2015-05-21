@@ -71,7 +71,7 @@ Display::Display(){
     printf("Testing with feed values for speed,avg,dist,time,unit,tiresize\n");
     //for testing the display format without implementing the state machine
     curSuper = MAIN;
-    curSub = ELAPSE_DISPLAY;
+    curSub = SPEED_DISPLAY;
     curSubr = NUM_R_STATES;
 //    curSuper = RESET;
 //       curSub = NUM_M_STATES;
@@ -104,11 +104,11 @@ int Display::runTimer(){
 //TODO may have to look into pulse ID other than 1
 	while(_run) {
 		pid = MsgReceivePulse(chid,&pulse,  sizeof( pulse ),NULL);
-		if (AUTO && (true)) { // TODO Auto mode, and motion is detected (REPLACE 'TRUE')
+		if (AUTO && (s->getWheelRot())) { // TODO Auto mode, and motion is detected (REPLACE 'TRUE')
 			cetime++;
 
 		}
-		else if (0) { //TODO Manual Mode and calc is on
+		else if (s->getTCalcFlg()) { //TODO Manual Mode and calc is on
 			cetime++;
 		}
 		s->setEtime(cetime); //update settings
@@ -538,7 +538,7 @@ uint8_t Display::digitToSegment(int digit) {
 }
 
 void Display:: refreshDisplay(){
-	uint8_t pAwrite;
+	uint8_t pAwrite=0;
 	//init Timer
 	printf("Display::refreshDisplay(): Creating 7 seg display timer\n");
 	struct _pulse pulse; //for timer msg
@@ -558,7 +558,7 @@ void Display:: refreshDisplay(){
 
 		//display for each digit/anode
 		//assign digit value for left most
-		pAwrite = in8 (d_i_o_port_a_handle);
+		//pAwrite = in8 (d_i_o_port_a_handle);
 		//pAwrite = pAwrite & ~A1 & ~A2 & ~A3; //turn off all anodes but 0
 		pAwrite = pAwrite | A1 | A2 | A3; //turn off all anodes but 0, w/ high sigs
 		pAwrite &= ~A0; //clear A0
@@ -570,7 +570,7 @@ void Display:: refreshDisplay(){
 		pid = MsgReceivePulse(chid,&pulse,  sizeof( pulse ),NULL);
 
 		//assign 2nd leftmost digit
-		pAwrite = in8(d_i_o_port_a_handle);
+		//pAwrite = in8(d_i_o_port_a_handle);
 		pAwrite = pAwrite | A0 | A2 |A3; //turn off all anodes but 1
 		pAwrite &= ~A1;
 		out8(d_i_o_port_a_handle, pAwrite);
@@ -579,7 +579,7 @@ void Display:: refreshDisplay(){
 		//sleep
 		pid = MsgReceivePulse(chid,&pulse,  sizeof( pulse ),NULL);
 
-		pAwrite = in8(d_i_o_port_a_handle);
+		//pAwrite = in8(d_i_o_port_a_handle);
 		pAwrite = pAwrite |A0 |A1 |A3; //turn off all anodes but 1
 		pAwrite &= ~A2;
 		out8(d_i_o_port_a_handle, pAwrite);
@@ -588,7 +588,7 @@ void Display:: refreshDisplay(){
 		//sleep
 		pid = MsgReceivePulse(chid,&pulse,  sizeof( pulse ),NULL);
 
-		pAwrite = in8(d_i_o_port_a_handle);
+		//pAwrite = in8(d_i_o_port_a_handle);
 		pAwrite = pAwrite |A0 |A1 |A2; //turn off all anodes but 1
 		pAwrite &= ~A3;
 		out8(d_i_o_port_a_handle, pAwrite);
@@ -679,7 +679,7 @@ void Display::refreshDisplayValues(){
 //#endif //TEST_DISPLAY
 
 //TODO might want to separate state/display determination for better display refresh w/o num change
-
+        ::usleep(50000);
     }   //end while _run 
     return;
 }
@@ -719,13 +719,13 @@ int Display::_refreshDistDisplay(uint8_t* d0, uint8_t* d1, uint8_t* d2, uint8_t*
         *d0 = 0;
         *d1 = 0;
         *d2 = digitToSegment(0);
-        dec = round( cdistance*10 );
+        dec = floor( cdistance*10 );
         *d3 = digitToSegment (dec);
         *d2 |= SDP; //set decimal
     } else { //regular dist diplay with 0's suppressed
 
         //get hundreds digit
-        hunds = floor(cdistance/100.0);//printf("hunds:%d ",hunds);
+        hunds = floor(cdistance/100);//printf("hunds:%d ",hunds);
         if (hunds !=0) {
             *d0 = digitToSegment(hunds);
         } else {
@@ -733,9 +733,9 @@ int Display::_refreshDistDisplay(uint8_t* d0, uint8_t* d1, uint8_t* d2, uint8_t*
         }
         //get tens digit
         if (temp >=100) {
-            temp = temp - hunds*100; //remove 100's digit
+            temp = fmod(temp,100); //remove 100's digit
         }
-        tens = floor(temp/10.0);//printf("tens:%d ",tens);
+        tens = floor(temp/10);//printf("tens:%d ",tens);
         if(tens !=0){
         	*d1 = digitToSegment(tens);
         }else{
@@ -744,7 +744,7 @@ int Display::_refreshDistDisplay(uint8_t* d0, uint8_t* d1, uint8_t* d2, uint8_t*
 
         //get ones digit
         if (temp >=10) {
-            temp = temp- tens*10;
+            temp = fmod(temp,10);
         }
         ones = floor(temp); //printf("ones:%d ",ones);
         *d2 = digitToSegment(ones);
@@ -783,6 +783,9 @@ int Display::_refreshSpeedDisplay(uint8_t* d0, uint8_t* d1, uint8_t* d2, uint8_t
         *d1 = digitToSegment (s2);
         *d0 |= SDP; //set decimal
     }else{
+    	if (cspeed >100) {
+    		cspeed = 99;
+    	}
         //greater than 10 
         s1 = floor(cspeed/10);
         s2 = floor(fmod(cspeed,10)); //no check for over 100
@@ -802,6 +805,9 @@ int Display::_refreshSpeedDisplay(uint8_t* d0, uint8_t* d1, uint8_t* d2, uint8_t
         *d2 |= SDP; //set decimal
     }else{
         // 
+    	if (cavg >100) {
+    		cavg = 99;
+		}
         a1 = floor(cavg/10);
         a2 = floor(fmod(cavg,10));
         *d2 = digitToSegment(a1);

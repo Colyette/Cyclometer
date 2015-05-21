@@ -20,6 +20,8 @@ public:
 		cdistance =0;
 		cetime=0;
 
+		WheelRot=0;
+
 
 	}
 	~Settings(){;}
@@ -47,6 +49,9 @@ public:
 
 	double getDist(){return cdistance;}
 	void setDist(double d) { cdistance = d;}
+
+	int getWheelRot(){return WheelRot;}
+	void setWheelRot(int w){WheelRot = w;}
 
 
 private:
