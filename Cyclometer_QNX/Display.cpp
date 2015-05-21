@@ -13,9 +13,9 @@
 
 #define POLL_RATE (5000000)//(13) //frequency for 7 seg display ~50/4 Hz
 
-#define ELAPSE_RES (1*10^9)	 //1 second resolution
+#define ELAPSE_RES (999999999)	 //~1 second resolution can't do 1s invalid arg
 
-#define TEST_DISPLAY 0 	//activates the main for display tests
+#define TEST_DISPLAY 1 	//activates the main for display tests
 
 void * DisplayRefreshHelper(void* instance) {
 	Display* c_instance = (Display*) instance;
@@ -47,16 +47,19 @@ Display::Display(){
     printf("Testing with feed values for speed,avg,dist,time,unit,tiresize\n");
     //for testing the display format without implementing the state machine
     curSuper = MAIN;
-    curSub = SPEED_DISPLAY;
+    curSub = ELAPSE_DISPLAY;
     curSubr = NUM_R_STATES;
+//    curSuper = RESET;
+//       curSub = NUM_M_STATES;
+//       curSubr = SET_TIRE_SIZE;
 
     //values
-    cspeed= 8.6;
-    cavg = 7.2;
-    cdistance =205.1 ;
-    cetime= 10000;     //in seconds
+    cspeed= 7;
+    cavg = 5;
+    cdistance =0.2 ;
+    cetime= 0;     //in seconds ~16:40
     unit=0;       //flg like 0 or 1
-    tireSize=240;
+    tireSize=210;
 #endif
 }
 
@@ -72,7 +75,7 @@ Display::~Display(){
 int Display::runTimer(){
 	struct _pulse pulse; //for timer msg
     int chid,pid; //for target of timer msg passing 
-    chid= _InitializeSegmentTimer(POLL_RATE,2); //returns the ch id for send messages
+    chid= _InitializeSegmentTimer(ELAPSE_RES,2); //returns the ch id for send messages
 //TODO may have to look into pulse ID other than 1
 	while(_run) {
 		pid = MsgReceivePulse(chid,&pulse,  sizeof( pulse ),NULL);
@@ -562,8 +565,8 @@ void Display::refreshDisplay(){
 //        dis1= digitToSegment(2);
 //        dis2=digitToSegment(5);
 //        dis3=digitToSegment(9);
-
-       // dis0=dis1=dis2=dis3=0xFF; //TESTING PORT B DIO
+printf(".");
+        dis0=dis1=dis2=dis3=0x00; //TESTING PORT B DIO
 #endif //TEST_DISPLAY
 
         //display for each digit/anode
@@ -646,7 +649,7 @@ int Display::_refreshDistDisplay(uint8_t* d0, uint8_t* d1, uint8_t* d2, uint8_t*
         *d2 = digitToSegment(0);
         dec = round( cdistance*10 );
         *d3 = digitToSegment (dec);
-        *d3 |= SDP; //set decimal
+        *d2 |= SDP; //set decimal
     } else { //regular dist diplay with 0's suppressed
         //get hundreds digit
         hunds = floor(cdistance/100);
@@ -668,12 +671,15 @@ int Display::_refreshDistDisplay(uint8_t* d0, uint8_t* d1, uint8_t* d2, uint8_t*
         ones = floor(temp);
         *d2 = digitToSegment(ones);
         //get tenths decimal digit
+       // printf("temp:%f\n",temp); 5.2
         if (temp >0) {
             temp = temp - ones;
         }
-        dec = temp*10 ;
-        *d3 = digitToSegment(dec);
-        *d3 |=SDP;
+
+        dec =  temp*10 ;//printf("%d ",dec);
+        //printf("dec:%f\n",dec); //prints correctly
+        *d2 |=SDP;
+        *d3 = digitToSegment((int)dec); //TODO off by one
         //return 1; //TODO error code checking
     } //end non-suppressing leading zeroes
     return 1; //TODO error code checking
@@ -687,12 +693,12 @@ int Display::_refreshSpeedDisplay(uint8_t* d0, uint8_t* d1, uint8_t* d2, uint8_t
     //TODO fix pulse counter for tenth decimal values as pre requirements
     double s1,s2,a1,a2; 
     //current speed dis
-    if ( (cspeed <10) & (cspeed >0) ) { //less than 10, use decimal
+    if ( (cspeed <1) & (cspeed >0) ) { //less than 10, use decimal
         s1 = floor(fmod(cspeed,10));
         s2 = round(fmod(cspeed*10,10));
         *d0 = digitToSegment (s1);
         *d1 = digitToSegment (s2);
-        *d1 |= SDP; //set decimal
+        *d0 |= SDP; //set decimal
     }else{
         //greater than 10 
         s1 = floor(cspeed/10);
@@ -705,12 +711,12 @@ int Display::_refreshSpeedDisplay(uint8_t* d0, uint8_t* d1, uint8_t* d2, uint8_t
     }
 
     //avg speed
-    if ( (cavg <10) & (cavg >0) ) {  //less than 10, use decimal
+    if ( (cavg <1) & (cavg >0) ) {  //less than 10, use decimal
         a1 = floor(fmod(cavg,10));
         a2 = round(fmod(cavg*10,10));
         *d2 = digitToSegment (a1);
         *d3 = digitToSegment (a2);
-        *d3 |= SDP; //set decimal
+        *d2 |= SDP; //set decimal
     }else{
         // 
         a1 = floor(cavg/10);
