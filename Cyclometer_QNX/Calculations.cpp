@@ -7,12 +7,21 @@
 
 #define WHEEL_TIME_OUT ( 850000000) // .85s
 
-#define TEST_CALCULATIONS 1
+//#define TEST_CALCULATIONS 1
+
+/* Starts the thread. This is the function that should be called
+ * by pthread_create */
+void * startCalculations(void * sensor)
+{
+	((Calculations *)sensor)->run();
+	return NULL;
+}
 
 //constructor
 Calculations::Calculations(){
-	_speed = _avg =_dist=0;
-
+	_speed = _avg =_dist=cetime=0;
+	_run=1;
+	//_dist = 1.5; //tesing
 #ifdef TEST_CALCULATIONS
 	//Testin Auto calculations at default wheel size
 	//WheelRot=1;
@@ -28,6 +37,13 @@ Calculations::~Calculations(){
 
 }
 
+//runs the state machine
+int Calculations::run() {
+	while (_run) {
+		runCalculationsStateMachine();
+	}
+	return 1;
+}
 
 //state machine is not really trigger event based, only outside event is poRest
 int Calculations::runCalculationsStateMachine(){
@@ -37,6 +53,9 @@ int Calculations::runCalculationsStateMachine(){
 	int _run =1;
     chid= _InitializeAccumTimer(WHEEL_TIME_OUT,5); //returns the ch id for send messages
 	while (_run) {
+		Auto = s->getAuto();
+		//printf("AUTO:%d\n",Auto);
+		TCalcFlg = s-> getTCalcFlg();
 		switch (curState) {
 			case ACCUM_WAIT: 
 				//wait for tm
@@ -46,7 +65,8 @@ int Calculations::runCalculationsStateMachine(){
 			case DET_MOTION: //want to fall here anyway
 				//read pulse counter
 				pCnt = pc->getCount();
-				printf("pCnt:%d\n",pCnt);
+				cetime = s->getEtime(); //for accurate timestamp
+				//printf("pCnt:%d\n",pCnt);
 				//clear pulse counter
 				pc->clearCount();
 				if (pCnt) { //there is motion
@@ -118,11 +138,13 @@ int Calculations::runCalculationsStateMachine(){
  */
 int Calculations::calcSpeed(int pulseCount){
 	//TODO need wheel size
+	tireSize = s->getTireSize();
 	_speed = pulseCount/(WHEEL_TIME_OUT/1000000000.0 );
 	_speed = _speed * (tireSize/100000.0)*(3600.0);  //kph
-#ifdef TEST_CALCULATIONS
+//#ifdef TEST_CALCULATIONS
 	printf("cs:%f\n",_speed);
-#endif
+//#endif
+	s->setCurSpeed(_speed);
 	return 1; //TODO may need to return speed and type double 
 }
 
@@ -131,9 +153,10 @@ int Calculations::calcSpeed(int pulseCount){
  */
 int Calculations::calcDistance(int pulseCount){
 	_dist += pulseCount*(tireSize*pow(10,-5) ); //km
-#ifdef TEST_CALCULATIONS
+//#ifdef TEST_CALCULATIONS
 	printf("d:%f\n",_dist);
-#endif
+//#endif
+	s->setDist(_dist);
 	return 1; 
 }
 
@@ -142,11 +165,18 @@ int Calculations::calcDistance(int pulseCount){
  * @precon calcDistance called beforehand for correct distance update
  */
 int Calculations::calcAvgSpeed(){
-	//TODO need elapse time
-	_avg = _dist/cetime;
-#ifdef TEST_CALCULATIONS
+	//TODO need elapse time, moved to pCnt snap
+	double hr = cetime/(60.0*60);
+	//printf("ce:%d\n",cetime);
+	//printf("hr:%f\n",hr);
+	if(hr){
+		_avg = _dist/hr;
+	}
+//#ifdef TEST_CALCULATIONS
+	//printf("et:%d",cetime);
 	printf("avg:%f\n",_avg);
-#endif
+//#endif
+	s->setAvgSpeed(_avg);
 	return 1;
 }
 

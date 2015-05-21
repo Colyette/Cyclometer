@@ -19,7 +19,7 @@
 #include <sys/netmgr.h> 	//channel constants like ND_LOCAL_NODE
 
 #include "events.h"
-#include "Calculations.h"	//referencing calc controller
+#include "Settings.h"	//referencing settings
 
 //7 segment pins
 //port A
@@ -73,6 +73,9 @@ int run();
 
 int initDIO(); //open and initializes DIO on the Data ack port
 
+//refreshes the 7 segment values for the display
+void refreshDisplayValues();
+
 //controls 7 seg display with internal variables and current state flgs
 void refreshDisplay();
 
@@ -92,7 +95,13 @@ int runTimer();
 //pass the last event triggered into Display class
 void eventUpdate( events lastEvent){curEvent = lastEvent;}
 
-void attachCalculations(Calculations* c){calc = c;}
+//attaches the reference to the calculations class
+void attachSettings(Settings* c){s = c;}
+
+
+//getter for the latest elapse time update
+int getLastElapse(){return cetime;}
+
 private:
 //for processing if Display is in the Reset state
 void _resetState();
@@ -125,8 +134,9 @@ uintptr_t d_i_o_control_handle ;     // control register for ports A, B, and C
 uintptr_t d_i_o_port_a_handle ;
 uintptr_t d_i_o_port_b_handle ;
  
-pthread_t eTimerThread;			//PID for elaspe timer thread
-pthread_t segmentRunner;		//PID for the 4 dig 7 seg display thread
+pthread_t eTimerThread;			//TID for elaspe timer thread
+pthread_t segmentRunner;		//TID for the 4 dig 7 seg display thread
+pthread_t segmentValueRunner;	//TID for 7 segment values to refresh
 display_super_state curSuper; 	//dictates whether to use curSub or curSubr, SuperState
 display_main_state curSub;		//main substates
 display_reset_state curSubr;	//reset substates
@@ -146,7 +156,10 @@ double cdistance;
 int WheelRot; 	//flg for determining if wheel is still rotating
 events curEvent;	//current event triggered
 //reference to Calculations values
-Calculations* calc;
+Settings* s;
+
+//7 segment values for current display
+uint8_t dis0,dis1,dis2,dis3;
 
 };
 #endif //DISPLAY_H

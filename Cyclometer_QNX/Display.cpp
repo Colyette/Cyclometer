@@ -7,23 +7,46 @@
 
 #include "Display.h"
 #include "WheelSensor.h"
-#include "PulseCounter.h"
+#include "Calculations.h"
+//#include "PulseCounter.h"
 //
 #include <pthread.h>
 
-#define POLL_RATE (5000000)//(13) //frequency for 7 seg display ~50/4 Hz
+#define POLL_RATE (5000000)// //frequency for 7 seg display ~50/4 Hz 5000000ns
 
 #define ELAPSE_RES (999999999)	 //~1 second resolution can't do 1s invalid arg
 
-//#define TEST_DISPLAY 1 	//activates the main for display tests
+#define TEST_DISPLAY 1 	//activates the main for display tests
 
 void * DisplayRefreshHelper(void* instance) {
 	Display* c_instance = (Display*) instance;
+
+	int ret;//policy;
+	struct sched_param  params;
+	pthread_attr_t attr;
+	//upping sched
+	pthread_attr_init( &attr );
+	ret = pthread_attr_getschedparam(&attr,&params); //confirmed RR with default priority 10
+	//ret = pthread_attr_getschedpolicy(&attr,&policy);
+	//printf("SCHED_RR:%d actual:%d\n",SCHED_RR, policy);
+	//printf("min:%d max:%d \n",sched_get_priority_min( 2),sched_get_priority_max( 2 ) );
+	printf("Priority DisplayRefreshHelper thread:%u\n",params.sched_priority),
+	params.sched_priority = params.sched_priority+30;
+	pthread_attr_setschedparam(&attr,&params);
+	ret = pthread_attr_getschedparam(&attr,&params);
+	printf("Priority DisplayRefreshHelper thread again?:%u\n",params.sched_priority),
+
 	printf("DisplayRefreshHelper: going into refresh thread\n");
 	c_instance->refreshDisplay(); //casted to instantiated class and run main thread funct
 	return 0 ;
 }
 
+void * DisplayRefreshValuesHelper(void* instance) {
+	Display* c_instance = (Display*) instance;
+	printf("DisplayRefreshValuesHelper: going into refresh thread\n");
+	c_instance->refreshDisplayValues(); //casted to instantiated class and run main thread funct
+	return 0 ;
+}
 void * DisplayElapseTimerHelper(void* instance) {
 	Display* c_instance = (Display*) instance;
 	printf("DisplayElapseTimerHelper: going into elapse timer thread\n");
@@ -43,6 +66,7 @@ Display::Display(){
 
     _run = 1;
 
+
 #ifdef TEST_DISPLAY
     printf("Testing with feed values for speed,avg,dist,time,unit,tiresize\n");
     //for testing the display format without implementing the state machine
@@ -54,6 +78,7 @@ Display::Display(){
 //       curSubr = SET_TIRE_SIZE;
 
     //values
+    AUTO =1;
     cspeed= 7;
     cavg = 5;
     cdistance =0.2 ;
@@ -81,10 +106,12 @@ int Display::runTimer(){
 		pid = MsgReceivePulse(chid,&pulse,  sizeof( pulse ),NULL);
 		if (AUTO && (true)) { // TODO Auto mode, and motion is detected (REPLACE 'TRUE')
 			cetime++;
+
 		}
 		else if (0) { //TODO Manual Mode and calc is on
 			cetime++;
 		}
+		s->setEtime(cetime); //update settings
 	}
 	return 1;
 }
@@ -139,11 +166,31 @@ int Display::initDIO(){
  * @precon: DIO is initialized
  */
 int Display::run(){ //TODO maybe initialize DIO in run???
+	//
+	struct sched_param  params;
+	pthread_attr_t attr;
+
+	int ret;//, prio;
+	//upping sched
+	pthread_attr_init( &attr );
+	ret = pthread_attr_getschedparam(&attr,&params);
+	printf("Priority main threads:%u\n",params.sched_priority),
+	params.sched_priority = params.sched_priority+1;
+	printf("Priority for segmentRunner:%u\n",params.sched_priority);
+	//ret = pthread_getschedparam(pthread_self(), &prio, &params);
+	//TODO ret !=0 ant prio
+	//printf("Got ret: %d, prio:%d, params.sched_priority:%d\n",ret,prio,params.sched_priority);
+
     //run refresh display thread
-    if (pthread_create (&segmentRunner, NULL, DisplayRefreshHelper, this)) { 
+    if (pthread_create (&segmentRunner,NULL, DisplayRefreshHelper, this)) {
         printf("Display MainThread: error creating dio Display processing thread\n");
         return -1;
     }
+    //run refresh display values thread refreshDisplayValues
+    if (pthread_create (&segmentValueRunner, NULL, DisplayRefreshValuesHelper, this)) {
+            printf("Display MainThread: error creating elapse timer thread\n");
+            return-3;
+        }
 	//run elaspe timer
  	if (pthread_create (&eTimerThread, NULL, DisplayElapseTimerHelper, this)) { 
         printf("Display MainThread: error creating elapse timer thread\n");
@@ -190,14 +237,22 @@ void Display::_resetState() {
 	switch (curSubr) {
 		case INIT_DATA:
 			Init = 1;
+
 			AUTO = 0; //manual
+			s->setAuto(AUTO);
 			TCalcFlg =0; //calc off
+			s->setTCalcFlg(TCalcFlg);
 			unit = 0; //unit kph
+			s->setUnit(unit);
 			tireSize = 210; 
+			s->setTireSize(tireSize);
 			//reset trip values
 			cavg = 0;
+			s->setAvgSpeed(cavg);
 			cdistance =0;
+			s->setDist(cdistance);
 			cetime=0;
+			s->setEtime(cetime);
 			curSubr = UNIT_SELECT;
 			break;
     	case UNIT_SELECT:
@@ -220,11 +275,13 @@ void Display::_resetState() {
 					if (tireSize < 220) {
 						tireSize = 190;
 					}
+					s->setTireSize(tireSize);
 					break;
 				case s_press:
 					if (Init) {
 						// maybe spawn timer in here instead.. or clr accum
 						cetime = 0;
+						s->setEtime(cetime);
 						//go to speed display
 						curSuper = MAIN;
 						curSubr = NUM_R_STATES;
@@ -234,6 +291,7 @@ void Display::_resetState() {
 						curSubr = NUM_R_STATES;
 						curSub =DISTANCE_DISPLAY;
 					}
+					break;
 				case m_hold:
 					curSubr = M_HOLD_WAIT;
 				default:
@@ -281,11 +339,14 @@ void Display::_mainState() {
 						} else {
 							TCalcFlg =1;
 						}
+						s->setTCalcFlg(TCalcFlg);
 					}
 					break;
 				case tReset: //clear trip values
 					cavg = 0;
+					s->setAvgSpeed(cavg);
 					cdistance =0;
+					s->setDist(cdistance);
 					cetime=0;
 					break;
 				case calcUpdate:
@@ -326,11 +387,14 @@ void Display::_mainState() {
 						} else {
 							TCalcFlg =1;
 						}
+						s->setTCalcFlg(TCalcFlg);
 					}
 					break;
 				case tReset: //clear trip values
 					cavg = 0;
+					s->setAvgSpeed(cavg);
 					cdistance =0;
+					s->setDist(cdistance);
 					cetime=0;
 					break;
 				case calcUpdate:
@@ -473,18 +537,75 @@ uint8_t Display::digitToSegment(int digit) {
     return converted;
 }
 
+void Display:: refreshDisplay(){
+	uint8_t pAwrite;
+	//init Timer
+	printf("Display::refreshDisplay(): Creating 7 seg display timer\n");
+	struct _pulse pulse; //for timer msg
+	int chid,pid; //for target of timer msg passing
+	chid= _InitializeSegmentTimer(POLL_RATE,1); //returns the ch id for send messages
+	while (_run){
+	//TODO switching order dist0 == an3
+		//TODO segments and anodes are active low?
+	#ifdef TEST_DISPLAY_FEED
+	//        dis0=digitToSegment(1);
+	//        dis1= digitToSegment(2);
+	//        dis2=digitToSegment(5);
+	//        dis3=digitToSegment(9);
+	printf(".");
+	dis0=dis1=dis2=dis3=0x00; //TESTING PORT B DIO
+	#endif //TEST_DISPLAY
 
+		//display for each digit/anode
+		//assign digit value for left most
+		pAwrite = in8 (d_i_o_port_a_handle);
+		//pAwrite = pAwrite & ~A1 & ~A2 & ~A3; //turn off all anodes but 0
+		pAwrite = pAwrite | A1 | A2 | A3; //turn off all anodes but 0, w/ high sigs
+		pAwrite &= ~A0; //clear A0
+		out8(d_i_o_port_a_handle, pAwrite);
+		out8(d_i_o_port_b_handle,(uint8_t)~dis3);// ~dis3);
+		//printf("%x\n",(uint8_t)~dis3);
+		//printf("%u\n",pAwrite);
+		//sleep
+		pid = MsgReceivePulse(chid,&pulse,  sizeof( pulse ),NULL);
+
+		//assign 2nd leftmost digit
+		pAwrite = in8(d_i_o_port_a_handle);
+		pAwrite = pAwrite | A0 | A2 |A3; //turn off all anodes but 1
+		pAwrite &= ~A1;
+		out8(d_i_o_port_a_handle, pAwrite);
+		out8(d_i_o_port_b_handle,(uint8_t) ~dis2);
+		//printf("%x\n",(uint8_t)~dis2);
+		//sleep
+		pid = MsgReceivePulse(chid,&pulse,  sizeof( pulse ),NULL);
+
+		pAwrite = in8(d_i_o_port_a_handle);
+		pAwrite = pAwrite |A0 |A1 |A3; //turn off all anodes but 1
+		pAwrite &= ~A2;
+		out8(d_i_o_port_a_handle, pAwrite);
+		out8(d_i_o_port_b_handle, ~dis1);
+		//printf("%x\n",(uint8_t)~dis1);
+		//sleep
+		pid = MsgReceivePulse(chid,&pulse,  sizeof( pulse ),NULL);
+
+		pAwrite = in8(d_i_o_port_a_handle);
+		pAwrite = pAwrite |A0 |A1 |A2; //turn off all anodes but 1
+		pAwrite &= ~A3;
+		out8(d_i_o_port_a_handle, pAwrite);
+		out8(d_i_o_port_b_handle, ~dis0);
+		//printf("%x\n",(uint8_t)~dis0);
+		//sleep TODO all sleep notes need timers for 'right' freq (1/4 50hz?)
+		pid = MsgReceivePulse(chid,&pulse,  sizeof( pulse ),NULL);
+	}
+
+}
 
 //controls 7 seg display with internal variables and current state flgs
-void Display::refreshDisplay(){
-    uint8_t dis0,dis1,dis2,dis3; //l to r
-    uint8_t pAwrite;
+void Display::refreshDisplayValues(){
+    //uint8_t dis0,dis1,dis2,dis3; //l to r
+
 //TODO set up DIO
-    //init Timer
-    printf("Display::refreshDisplay(): Creating 7 seg display timer\n");
-    struct _pulse pulse; //for timer msg
-    int chid,pid; //for target of timer msg passing
-    chid= _InitializeSegmentTimer(POLL_RATE,1); //returns the ch id for send messages
+
     printf("Entering with states Sup:%d Sur:%d Sum:%d\n", curSuper,curSubr, curSub);
     while (_run) {
         //check state to formate diplay correctly
@@ -558,57 +679,7 @@ void Display::refreshDisplay(){
 //#endif //TEST_DISPLAY
 
 //TODO might want to separate state/display determination for better display refresh w/o num change
-//TODO switching order dist0 == an3
-        //TODO segments and anodes are active low?
-#ifdef TEST_DISPLAY_FEED
-//        dis0=digitToSegment(1);
-//        dis1= digitToSegment(2);
-//        dis2=digitToSegment(5);
-//        dis3=digitToSegment(9);
-printf(".");
-        dis0=dis1=dis2=dis3=0x00; //TESTING PORT B DIO
-#endif //TEST_DISPLAY
 
-        //display for each digit/anode
-        //assign digit value for left most
-        pAwrite = in8 (d_i_o_port_a_handle);
-        //pAwrite = pAwrite & ~A1 & ~A2 & ~A3; //turn off all anodes but 0
-        pAwrite = pAwrite | A1 | A2 | A3; //turn off all anodes but 0, w/ high sigs
-        pAwrite &= ~A0; //clear A0
-        out8(d_i_o_port_a_handle, pAwrite);
-        out8(d_i_o_port_b_handle,(uint8_t)~dis3);// ~dis3);
-        //printf("%x\n",(uint8_t)~dis3);
-        //printf("%u\n",pAwrite);
-        //sleep 
-        pid = MsgReceivePulse(chid,&pulse,  sizeof( pulse ),NULL);
-
-        //assign 2nd leftmost digit
-        pAwrite = in8(d_i_o_port_a_handle);
-        pAwrite = pAwrite | A0 | A2 |A3; //turn off all anodes but 1
-        pAwrite &= ~A1;
-        out8(d_i_o_port_a_handle, pAwrite);
-        out8(d_i_o_port_b_handle,(uint8_t) ~dis2);
-        //printf("%x\n",(uint8_t)~dis2);
-        //sleep
-        pid = MsgReceivePulse(chid,&pulse,  sizeof( pulse ),NULL);
-
-        pAwrite = in8(d_i_o_port_a_handle);
-        pAwrite = pAwrite |A0 |A1 |A3; //turn off all anodes but 1
-        pAwrite &= ~A2;
-        out8(d_i_o_port_a_handle, pAwrite);
-        out8(d_i_o_port_b_handle, ~dis1);
-        //printf("%x\n",(uint8_t)~dis1);
-        //sleep
-        pid = MsgReceivePulse(chid,&pulse,  sizeof( pulse ),NULL);
-
-        pAwrite = in8(d_i_o_port_a_handle);
-        pAwrite = pAwrite |A0 |A1 |A2; //turn off all anodes but 1
-        pAwrite &= ~A3;
-        out8(d_i_o_port_a_handle, pAwrite);
-        out8(d_i_o_port_b_handle, ~dis0);
-        //printf("%x\n",(uint8_t)~dis0);
-        //sleep TODO all sleep notes need timers for 'right' freq (1/4 50hz?)
-        pid = MsgReceivePulse(chid,&pulse,  sizeof( pulse ),NULL);
     }   //end while _run 
     return;
 }
@@ -640,9 +711,10 @@ int Display::_refreshElapseDisplay (uint8_t* d0, uint8_t* d1, uint8_t* d2, uint8
  */
 int Display::_refreshDistDisplay(uint8_t* d0, uint8_t* d1, uint8_t* d2, uint8_t* d3) {
     double hunds,tens,ones,dec,temp;
+    cdistance = s->getDist();
     temp = cdistance; 
     //check if only decimal distance
-    if ( (cdistance <1) && (cdistance >0) ) { 
+    if ( (cdistance <1) && (cdistance >0) ) {
         //blank leding zeroes
         *d0 = 0;
         *d1 = 0;
@@ -651,8 +723,9 @@ int Display::_refreshDistDisplay(uint8_t* d0, uint8_t* d1, uint8_t* d2, uint8_t*
         *d3 = digitToSegment (dec);
         *d2 |= SDP; //set decimal
     } else { //regular dist diplay with 0's suppressed
+
         //get hundreds digit
-        hunds = floor(cdistance/100);
+        hunds = floor(cdistance/100.0);//printf("hunds:%d ",hunds);
         if (hunds !=0) {
             *d0 = digitToSegment(hunds);
         } else {
@@ -662,29 +735,37 @@ int Display::_refreshDistDisplay(uint8_t* d0, uint8_t* d1, uint8_t* d2, uint8_t*
         if (temp >=100) {
             temp = temp - hunds*100; //remove 100's digit
         }
-        tens = floor(temp/10);
-        *d1 = digitToSegment(tens);
+        tens = floor(temp/10.0);//printf("tens:%d ",tens);
+        if(tens !=0){
+        	*d1 = digitToSegment(tens);
+        }else{
+        	*d1 = 0;
+        }
+
         //get ones digit
         if (temp >=10) {
             temp = temp- tens*10;
         }
-        ones = floor(temp);
+        ones = floor(temp); //printf("ones:%d ",ones);
         *d2 = digitToSegment(ones);
         //get tenths decimal digit
        // printf("temp:%f\n",temp); 5.2
         if (temp >0) {
             temp = temp - ones;
         }
-
-        dec =  temp*10 ;//printf("%d ",dec);
+        temp = cdistance-(int)cdistance;
+        dec =  floor(temp*10.0) ;//printf("dec:%d \n",dec);
         //printf("dec:%f\n",dec); //prints correctly
+
         *d2 |=SDP;
         *d3 = digitToSegment((int)dec); //TODO off by one
+
         //return 1; //TODO error code checking
     } //end non-suppressing leading zeroes
     return 1; //TODO error code checking
 }
-int flip =1;
+//TODO int flip =1;
+
 /**
  * @brief From the current speed and the average speed the segments values 
  * are updated into param'd variables for each for the next refresh
@@ -692,6 +773,8 @@ int flip =1;
 int Display::_refreshSpeedDisplay(uint8_t* d0, uint8_t* d1, uint8_t* d2, uint8_t* d3) {
     //TODO fix pulse counter for tenth decimal values as pre requirements
     double s1,s2,a1,a2; 
+    cspeed = s->getCurSpeed();
+    cavg = s->getAvgSpeed();
     //current speed dis
     if ( (cspeed <1) & (cspeed >0) ) { //less than 10, use decimal
         s1 = floor(fmod(cspeed,10));
@@ -706,9 +789,9 @@ int Display::_refreshSpeedDisplay(uint8_t* d0, uint8_t* d1, uint8_t* d2, uint8_t
         *d0 = digitToSegment(s1);
         *d1 = digitToSegment(s2);
     }
-    if (flip) {
-    	printf("speed: %f %f\n",s1,s2);
-    }
+//    if (flip) {
+//    	printf("speed: %f %f\n",s1,s2);
+//    }
 
     //avg speed
     if ( (cavg <1) & (cavg >0) ) {  //less than 10, use decimal
@@ -724,10 +807,10 @@ int Display::_refreshSpeedDisplay(uint8_t* d0, uint8_t* d1, uint8_t* d2, uint8_t
         *d2 = digitToSegment(a1);
         *d3 = digitToSegment(a2);
     }
-    if (flip) {
-        	printf("avg: %f %f\n",a1,a2);
-        }
-    flip =0;
+//    if (flip) {
+//        	printf("avg: %f %f\n",a1,a2);
+//        }
+//    flip =0;
     return 1;
 }
 
@@ -768,14 +851,34 @@ int Display::_refreshTireDisplay(uint8_t* d0, uint8_t* d1, uint8_t* d2, uint8_t*
 #ifdef TEST_DISPLAY
 int main() {
 	printf("Initializing Display\n");
-	WheelSensor * wheelSensor = new WheelSensor();
-	pthread_create(NULL, NULL, startWheelSensor, wheelSensor);
+//	WheelSensor * wheelSensor = new WheelSensor();
+//	pthread_create(NULL, NULL, startWheelSensor, wheelSensor);
 //	PulseCounter * pulseCounter = new PulseCounter();
 //	pthread_create(NULL, NULL, startPulseCounter, pulseCounter);
 	//wheelSensor->run();
-	Display dist;
-	dist.initDIO();
-	dist.run();
+	pthread_t wThread,cThread;
+	Calculations cal = Calculations();
+	WheelSensor ws = WheelSensor();
+	Settings set = Settings();
+	printf("DEFAULT AUTO: %d\n",set.getAuto());
+	set.setAuto(1); //FORCING AUTO MODE
+	//set.setDist(0.9);
+	Display disp;
+	disp.initDIO();
+	cal.attachPulseCounter(&ws);
+	cal.attachSettings(&set);
+	//TODO this should be spawned by calculations class?
+	if (pthread_create (&wThread, NULL,startWheelSensor, &ws)) {
+			printf("WheelSensor MainThread: error running thread\n");
+			return -1;
+	}
+	if (pthread_create (&cThread, NULL,startCalculations, &cal)) {
+				printf("WheelSensor MainThread: error running thread\n");
+				return -1;
+	}
+
+	disp.attachSettings(&set);
+	disp.run();
 
 	//TODO give display some test events with delays of course
 }

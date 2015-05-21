@@ -9,12 +9,15 @@
 
 #include "events.h"
 #include "WheelSensor.h"
+#include "Settings.h"
 #include <math.h> 		//trip and current speed calculations
 #include <assert.h>			/* for timer's assert */
 #include <sys/netmgr.h> 	//channel constants like ND_LOCAL_NODE
 #include <stdlib.h> //exit()
 
 #define ACCUM_TIMEOUT_NS	(830000000)
+
+void * startCalculations(void *);
 
 class Calculations {
 public:
@@ -29,7 +32,7 @@ PO_RESET_CALC,NUM_CALC_STATES};
 	int calcDistance(int pulseCount);
 
 	
-	int runCalculations();
+	int run();
 	//det next state depending on the transition triggered 
 	int runCalculationsStateMachine();
 
@@ -47,7 +50,11 @@ PO_RESET_CALC,NUM_CALC_STATES};
 
 	//attaching the externally init WheelSensor
 	void attachPulseCounter(WheelSensor* w) {pc = w;}
+
+	//attaching the externally init Display
+	void attachSettings(Settings* d){s = d;}
 private:
+	int _run;
 	events curEvent;
 
 	calcStates curState;	
@@ -65,5 +72,7 @@ private:
 
 	//reference to a pre-init WheelSensor
 	WheelSensor* pc;	//for monitoring the pulse counts
+	//reference to pre-init Display
+	Settings* s;
 };
 #endif //CALCULATIONS_H
