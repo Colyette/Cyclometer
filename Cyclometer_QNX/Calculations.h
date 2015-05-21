@@ -53,9 +53,12 @@ private:
 	double _avg;
 	double _dist;
 
-	//int WheelRot;
-	//int tireSize;
-	//int cetime
+	//TODO these are modified from the Display class actually
+	int WheelRot;
+	int tireSize;
+	int cetime;
+	int Auto;
+	int TCalcFlg;
 
 	//reference to a pre-init WheelSensor
 	WheelSensor* pc;	//for monitoring the pulse counts

@@ -12,6 +12,15 @@
 //constructor
 Calculations::Calculations{
 	_speed = _avg =_dist=0;
+
+#ifdef TEST_CALCULATIONS
+	//Testin Auto calculations at default wheel size
+	//WheelRot=1;
+	int tireSize = 210;
+	int cetime =0;
+	int Auto =1;
+	int TCalcFlg=0;
+#endif
 }
 
 
@@ -41,7 +50,7 @@ int Calculations::runCalculationsStateMachine(){
 				} else { //too slow for detection, no motion
 					curState = DET_TRIP_CALC;
 					//TODO trigger actions
-					//turnOff(WHEEL_LED);
+					//TODO maybe a call to display,turnOff(WHEEL_LED);
 					//WheelRot =0;
 				} //end of transition from DET_MOTION
 				break;
@@ -79,6 +88,8 @@ int Calculations::runCalculationsStateMachine(){
 			case TRIP_CALC_UPDATE:
 				calcDistance(pCnt);
 				calcAvgSpeed();
+				curState = ACCUM_WAIT;
+				throwEvent(calcUpdate);
 				break;
 
 			case PO_RESET_CALC:
@@ -175,6 +186,7 @@ int Calculations::_InitializeAccumTimer(long nsfreq, int pulseid){
 }
 
 #ifdef TEST_CALCULATIONS
+//should attach and run wheel sensor, while spamming speed, avg speed, and distance
 int main () {
 	Calculations cal = Calculations();
 	WheelSensor ws = WheelSensor();
