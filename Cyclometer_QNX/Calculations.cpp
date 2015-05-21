@@ -7,6 +7,14 @@
 
 #define WHEEL_TIME_OUT ( 850000000) // .85s
 
+#define TEST_CALCULATIONS 1
+
+//constructor
+Calculations::Calculations{
+	_speed = _avg =_dist=0;
+}
+
+
 //state machine is not really trigger event based, only outside event is poRest
 int Calculations::runCalculationsStateMachine(){
 	int pCnt;
@@ -69,7 +77,7 @@ int Calculations::runCalculationsStateMachine(){
 				break;
 
 			case TRIP_CALC_UPDATE:
-				calcDistance();
+				calcDistance(pCnt);
 				calcAvgSpeed();
 				break;
 
@@ -93,6 +101,9 @@ int Calculations::calcSpeed(int pulseCount){
 	//TODO need wheel size
 	_speed = pulseCount/(pow(10,-9)*WHEEL_TIME_OUT );
 	_speed = _speed * (tireSize*pow(10,-5)/(60*60);  //kph
+#ifdef TEST_CALCULATIONS
+	printf("cs:%f\n",_speed);
+#endif
 	return 1; //TODO may need to return speed and type double 
 }
 
@@ -101,6 +112,9 @@ int Calculations::calcSpeed(int pulseCount){
  */
 int calcDistance(int pulseCount){
 	_distance += pulseCount*(tireSize*pow(10,-5) ); //km
+#ifdef TEST_CALCULATIONS
+	printf("d:%f\n",_distance);
+#endif
 	return 1; 
 }
 
@@ -111,6 +125,9 @@ int calcDistance(int pulseCount){
 int calcAvgSpeed(){
 	//TODO need elapse time
 	_avg = _distance/cetime;
+#ifdef TEST_CALCULATIONS
+	printf("avg:%f\n",_avg);
+#endif
 	return;
 }
 
@@ -156,3 +173,22 @@ int Calculations::_InitializeAccumTimer(long nsfreq, int pulseid){
 
 	  return chid;
 }
+
+#ifdef TEST_CALCULATIONS
+int main () {
+	Calculations cal = Calculations();
+	WheelSensor ws = WheelSensor();
+	cal.attachPulseCounter(&ws);
+	pthread_t wThread;
+	//TODO this should be spawned by calculations class?
+	if (pthread_create (&wThread, NULL,startWheelSensor, &ws)) {
+	        printf("WheelSensor MainThread: error running thread\n");
+	        return -1;
+	 }
+	
+	while (1) {
+		cal.runCalculationsStateMachine();
+	}
+}
+#endif //CALCULATIONS
+

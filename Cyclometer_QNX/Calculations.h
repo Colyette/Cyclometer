@@ -10,6 +10,8 @@
 #include "events.h"
 #include "WheelSensor.h"
 #include <cmath.h> 		//trip and current speed calculations
+#include <assert.h>			/* for timer's assert */
+#include <sys/netmgr.h> 	//channel constants like ND_LOCAL_NODE
 
 #define ACCUM_TIMEOUT_NS	(830000000)
 
